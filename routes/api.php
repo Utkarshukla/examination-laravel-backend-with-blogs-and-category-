@@ -34,16 +34,20 @@ Route::post('/login',[LoginController::class,"login"]);
 
 Route::middleware('auth:api')->post('/logout', [LoginController::class, 'logout']);
 
-// Post Routes
-// Route::group(['middleware' => ['AuthJwt']], function () {
-
-
- //});
 Route::get('/posts', [PostController::class, 'showAll'])->name('posts.showAll');
-Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
-Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
-Route::put('/posts/{id}', [PostController::class, 'update'])->name('posts.update');
-Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
+// Post Routes
+
+Route::group(['middleware' => ['auth:api']], function () {
+    Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
+    Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+    Route::put('/posts/{id}', [PostController::class, 'update'])->name('posts.update');
+    Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
+
+});
+    
+
+ 
+
 
 //Category Routes
 Route::get('/categories',[CategoryController::class, 'index'])->name('getCategories');

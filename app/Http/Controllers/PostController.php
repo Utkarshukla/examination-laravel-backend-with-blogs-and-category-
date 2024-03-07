@@ -27,7 +27,8 @@ class PostController extends Controller
             'tags.*.name' => 'required',
         ]);
         
-
+echo $request->thumbnail;
+echo $request->media;
         if ($request->hasFile('thumbnail')) {
             $thumbnail = $request->file('thumbnail');
             $thumbnailPath = $thumbnail->store('thumbnails', 'public');
