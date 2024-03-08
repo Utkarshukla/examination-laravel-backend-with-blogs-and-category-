@@ -8,7 +8,7 @@ use App\Models\Tag;
 use App\Models\Category;
 use App\Models\PostRelationCategory;
 use App\Models\PostRelationTag;
-
+use Illuminate\Http\UploadedFile;
 
 class PostController extends Controller
 {
@@ -22,27 +22,25 @@ class PostController extends Controller
             'long_description' => 'required',
             'author' => 'required',
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'media.*' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,png,jpeg,jpg,gif|max:10240',
+            //'media.*' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,png,jpeg,jpg,gif|max:10240',
             'categories.*.name' => 'required',
             'tags.*.name' => 'required',
         ]);
         
-echo $request->thumbnail;
-echo $request->media;
         if ($request->hasFile('thumbnail')) {
             $thumbnail = $request->file('thumbnail');
             $thumbnailPath = $thumbnail->store('thumbnails', 'public');
             $validatedData['thumbnail'] = $thumbnailPath;
         }
-        
-        if ($request->hasFile('media')) {
-            $mediaPaths = [];
-            foreach ($request->file('media') as $file) {
-                $mediaPath = $file->store('media', 'public');
-                $mediaPaths[] = $mediaPath;
-            }
-            $validatedData['media'] = json_encode($mediaPaths);
-        }
+
+        // if ($request->hasFile('media')) {
+        //     $mediaPaths = [];
+        //     foreach ($request->file('media') as $file) {
+        //         $mediaPath = $file->store('media', 'public');
+        //         $mediaPaths[] = $mediaPath;
+        //     }
+        //     $validatedData['media'] = json_encode($mediaPaths);
+        // }
         
         $post = Post::create($validatedData);
        
