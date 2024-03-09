@@ -28,6 +28,7 @@ use App\Http\Controllers\CategoryController;
 // });
 
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\FrontendMediaController;
 
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 Route::post('/login',[LoginController::class,"login"]);
@@ -45,8 +46,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 });
     
 Route::get('/categories',[CategoryController::class, 'index'])->name('getCategories');
-
- 
+Route::post('/frontendmedia',[FrontendMediaController::class,'store']);
+Route::get('/frontendmedia',[FrontendMediaController::class,'show']);
 
 
 
