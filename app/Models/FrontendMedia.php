@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class FrontendMedia extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'active','author_id', 'media'];
+    protected $fillable = ['name', 'active','author_id', 'media', 'extra'];
 }

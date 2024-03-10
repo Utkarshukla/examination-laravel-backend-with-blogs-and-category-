@@ -41,13 +41,13 @@ class GoogleLoginController extends Controller
 
             $token = JWTAuth::fromUser($newUser);
 
-            return response()->json(['user' => $newUser, 'token' => $token]);
+            return response()->json(['status'=>'success','user' => $newUser, 'token' => $token]);
         }
         $token = JWTAuth::fromUser($existingUser);
 
-        return response()->json(['user' => $existingUser, 'token' => $token]);
+        return response()->json(['status'=>'success','user' => $existingUser, 'token' => $token]);
     } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
+        return response()->json(['status'=>'failure','error' => $e->getMessage()], 500);
     }
 }
 

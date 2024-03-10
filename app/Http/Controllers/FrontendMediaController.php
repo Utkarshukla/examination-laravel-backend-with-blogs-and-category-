@@ -13,6 +13,7 @@ class FrontendMediaController extends Controller
             'name'=>'required | string',
             'author_id'=>'required',
             'media'=>'required|file|mimes:jpeg,png,jpg,gif,mp4,avi,mov|max:4096',
+            'extra'=>'nullable',
         ]);
         if($req->hasFile('media')){
             $media =$req->file('media');
@@ -20,11 +21,15 @@ class FrontendMediaController extends Controller
             $validateData['media']=$mediaPath;
         }
         $frontendmedia= FrontendMedia::create($validateData);
-        return response()->json(['status'=>'success','message'=>'media added Successfully']);
+        return response()->json(['status'=>'success','data'=>'media added Successfully']);
     }
     public function show(){
         $media =FrontendMedia::paginate(10);//DB::table('frontend_media')->paginate(10);
         
+        return response()->json(['status'=>'success','data'=>$media]);
+    }
+    public function find($page){
+        $media= FrontendMedia::where('extra','=',$page)->get();
         return response()->json(['status'=>'success','data'=>$media]);
     }
 }

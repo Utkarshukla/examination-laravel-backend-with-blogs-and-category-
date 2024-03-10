@@ -15,7 +15,6 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         $validator = $this->validator($request->all());
-        echo 'run18';
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 422);
         }
@@ -24,7 +23,7 @@ class RegisterController extends Controller
 
         $token = JWTAuth::fromUser($user);
 
-        return response()->json(['user' => $user, 'token' => $token]);
+        return response()->json(['status'=>'success','user' => $user, 'token' => $token]);
     }
 
     protected function validator(array $data)
