@@ -15,7 +15,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Mail\VerifyEmail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-
+use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -62,32 +62,35 @@ class LoginController extends Controller
     }
     public function verifyEmail(Request $request)
 {
-    //try {
+    try {
         $user = JWTAuth::parseToken()->authenticate();
         $token = Str::random(60);
+        if($user->email_verified_at !=null){
+            return response()->json(['status'=>'success','message'=>'Mail is already Verified.']);
+        }
         
         $user->remember_token = $token;
         $user->save();
-        echo '70';
-      $mail=  Mail::to($user->email)->send(new VerifyEmail($user));
         
-        return response()->json(['message' => $mail]);
-   // } catch (\Exception $e) {
-    //    return response()->json(['message' => 'Unauthorized'], 401);
-    //}
+        Mail::to($user->email)->send(new VerifyEmail($user));
+        
+        return response()->json(['status'=>'success','message' => 'Verification link Send successfully']);
+    } catch (\Exception $e) {
+       return response()->json(['message' => 'Unauthorized'], 401);
+    }
 }
 
-public function verifyEmailToken(Request $request, $token)
+public function verifyEmailToken(Request $request, $email ,$token)
 {
     try {
-        $user = JWTAuth::parseToken()->authenticate();
-        
+        $user = User::where('email','=',$email)->first();
+        echo $user->remember_token;
         if ($user->remember_token === $token) {
             $user->email_verified_at = now();
             $user->remember_token = null;
             $user->save();
-
-            return response()->json(['message' => 'Email verified successfully']);
+            echo 'Successfully verified';
+            return redirect('https://example.com');
         } else {
             return response()->json(['message' => 'Invalid token'], 400);
         }

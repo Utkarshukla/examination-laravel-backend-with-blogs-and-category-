@@ -33,7 +33,7 @@ Route::post('/login',[LoginController::class,"login"]);
 Route::middleware('auth:api')->post('/logout', [LoginController::class, 'logout']);
 Route::middleware('auth:api')->get('/refresh-token', [LoginController::class, 'refreshToken']);
 Route::middleware('auth:api')->get('/verify-email', [LoginController::class, 'verifyEmail']);
-Route::middleware('auth:api')->get('/verify-email/{token}', [LoginController::class, 'verifyEmailToken']);
+Route::get('/verify-email/{email}/{token}', [LoginController::class, 'verifyEmailToken']);
 
 
 
@@ -58,6 +58,9 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
     //Category Routes
     Route::post('/category',[CategoryController::class, 'store'])->name('postCategories');
+
+    Route::get('/post/{postid}/comment/',[CommentController::class,'show']);
+    Route::post('/post/{postid}/comment/',[CommentController::class,'store']);
 });
     
 Route::get('/categories',[CategoryController::class, 'index'])->name('getCategories');
