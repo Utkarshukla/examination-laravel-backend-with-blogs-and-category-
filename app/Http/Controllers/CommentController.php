@@ -24,7 +24,10 @@ class CommentController extends Controller
         return response()->json(['status' => 'success','message'=>'Comment created successfully', 'comment' => $comment], 201);
     }
     public function show($post){
-        $list=Comment::where('post_id','=',$post)->get();
+        $list=Comment::select('comments.*', 'users.name', 'users.email')
+            ->join('users', 'comments.author_id', '=', 'users.id')
+            ->where('comments.post_id', $post)
+            ->get();
         return response()->json(['status'=>'success','data'=>$list]);
     }
 }
