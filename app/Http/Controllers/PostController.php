@@ -113,7 +113,7 @@ class PostController extends Controller
     
         return response()->json(['status' => 'success','message' => 'Post updated successfully'], 200);
     }
-
+    
     public function destroy($id)
     {
         $post = Post::findOrFail($id);
