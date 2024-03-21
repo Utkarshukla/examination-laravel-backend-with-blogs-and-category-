@@ -13,15 +13,12 @@ class CategoryController extends Controller
     // }
     public function store(Request $request)
     {
-        echo 'hi1';
-        // Validate the request data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             
-            'parent_id' => 'nullable|exists:categories,id', // Ensure parent category exists
+            'parent_id' => 'nullable|exists:categories,id', 
         ]);
-        echo 'hi';
-        // Create the category
+        
         $category = Category::create($validatedData);
 
         return response()->json($category, 201);

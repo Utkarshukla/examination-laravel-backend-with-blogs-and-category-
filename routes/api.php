@@ -26,6 +26,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\FrontendMediaController;
 use App\Http\Controllers\Auth\GoogleLoginController;
+use App\Http\Controllers\ContactForm;
 
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 Route::post('/login',[LoginController::class,"login"]);
@@ -68,7 +69,7 @@ Route::get('/categories',[CategoryController::class, 'index'])->name('getCategor
 Route::get('/frontendmedia',[FrontendMediaController::class,'show']);
 Route::get('frontendmedia/{page}',[FrontendMediaController::class, 'find']);
 
-
+Route::post('/contact',[ContactForm::class, 'index']);
 
 Route::get('/auth/google/redirect', [GoogleLoginController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback']);
