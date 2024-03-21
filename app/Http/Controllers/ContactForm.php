@@ -20,6 +20,7 @@ class ContactForm extends Controller
         ]);
         $adminMail = 'shukla@phantasm.co.in';
         $data= $validateData;
+        echo env('ADMINMAIL');
         // print_r($data);
         try {
             Mail::to($adminMail)->send(new ContactMail($data));

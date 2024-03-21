@@ -9,6 +9,8 @@ use App\Models\Category;
 use App\Models\PostRelationCategory;
 use App\Models\PostRelationTag;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+
 
 class PostController extends Controller
 {
@@ -58,7 +60,7 @@ class PostController extends Controller
             PostRelationTag::create(['post_id' => $post->id, 'tag_id' => $tag->id]);
         }
 
-        return response()->json(['message' => 'Post created successfully'], 201);
+        return response()->json(['status' => 'success','message' => 'Post created successfully'], 201);
     }
 
     public function showAll(){
@@ -70,7 +72,6 @@ class PostController extends Controller
         
         $post = Post::with('tags', 'categories')->findOrFail($id);
 
-        // Decode the media field from JSON string to array
         $post->media = json_decode($post->media);
     
         return response()->json($post);
@@ -78,13 +79,45 @@ class PostController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Similar to store method but for updating existing post
+        $post = Post::findOrFail($id); //try catch not needed
+
+        $validatedData = $request->validate([
+            'title' => 'required',
+            'short_description' => 'required',
+            'long_description' => 'required',
+            'author' => 'required',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'categories.*.name' => 'required',
+            'tags.*.name' => 'required',
+        ]);
+    
+        if ($request->hasFile('thumbnail')) {
+            $thumbnail = $request->file('thumbnail');
+            $thumbnailPath = $thumbnail->store('thumbnails', 'public');
+            $validatedData['thumbnail'] = $thumbnailPath;
+            Storage::disk('public')->delete($post->thumbnail);
+        }
+        $post->update($validatedData);
+        $categoriesData = $request->input('categories');
+        $post->categories()->detach(); 
+        foreach ($categoriesData as $categoryData) {
+            $category = Category::firstOrCreate(['name' => $categoryData['name']], $categoryData);
+            $post->categories()->attach($category->id);
+        }
+        $tagsData = $request->input('tags');
+        $post->tags()->detach(); 
+        foreach ($tagsData as $tagData) {
+            $tag = Tag::firstOrCreate(['name' => $tagData['name']], $tagData);
+            $post->tags()->attach($tag->id);
+        }
+    
+        return response()->json(['status' => 'success','message' => 'Post updated successfully'], 200);
     }
 
     public function destroy($id)
     {
         $post = Post::findOrFail($id);
         $post->delete();
-        return response()->json(['message' => 'Post deleted successfully']);
+        return response()->json(['status' => 'success','message' => 'Post deleted successfully']);
     }
 }
