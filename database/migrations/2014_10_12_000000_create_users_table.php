@@ -19,10 +19,10 @@ return new class extends Migration
             $table->string('phone')->nullable(); //stduent //school
             $table->string('father')->nullable(); //stduent 
             $table->string('mother')->nullable(); //stduent
-            $table->string('class')->nullable(); //stduent
+            $table->integer('class')->nullable(); //stduent
             $table->string('gender')->nullable(); //school
             $table->date('dob')->nullable();//student 
-            $table->tinyInteger('role')->default(5); 
+            $table->tinyInteger('role')->default(5); //admin:1 school:2 approval:6 student:5
             $table->string('city'); //stduent
             $table->string('district'); //stduent
             $table->string('state')->default('Andhra Pradesh');
