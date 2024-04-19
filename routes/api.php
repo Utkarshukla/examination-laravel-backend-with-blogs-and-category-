@@ -45,35 +45,43 @@ Route::get('/posts', [PostController::class, 'showAll'])->name('posts.showAll');
 
 //Routes for logged in user 
 Route::group(['middleware' => ['auth:api']], function () {
-
+    //admin only
     Route::middleware(['checkRole:1'])->group(function () {
-    //    admin only
+    
         Route::get('/a/test', function (){
             return "hi superadmin";
         });
        
     });
-    
+    //incharge only
     Route::middleware(['checkRole:2'])->group(function () {
-       //incharge only
-       Route::get('/i/test', function (){
-        return "hi incharge";
+       
+        Route::get('/i/test', function (){
+            return "hi incharge";
+        });
     });
-    });
+
     Route::middleware(['checkRole:1,2'])->group(function () {
     
         Route::get('/c/test', function (){
             return "hi common";
         });
     });
-
+    //student only
     Route::middleware(['checkRole:5'])->group(function () {
-        //student only
+        
         Route::get('s/test', function (){
             return "hi student";
         });
     });
 
+    //for all user
+    Route::middleware(['checkRole:1,2,3'])->group(function () {
+    
+        Route::get('/c/test', function (){
+            return "hi common";
+        });
+    });
 
 
 
