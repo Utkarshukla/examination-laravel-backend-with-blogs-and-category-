@@ -46,12 +46,39 @@ Route::get('/posts', [PostController::class, 'showAll'])->name('posts.showAll');
 //Routes for logged in user 
 Route::group(['middleware' => ['auth:api']], function () {
 
-
-    //Routes for Role 1 (admin) only 
-    Route::group(['middleware' => 'checkRole'], function () {
-        
-        Route::post('/frontendmedia',[FrontendMediaController::class,'store']);
+    Route::middleware(['checkRole:1'])->group(function () {
+    //    admin only
+        Route::get('/a/test', function (){
+            return "hi superadmin";
+        });
+       
     });
+    
+    Route::middleware(['checkRole:2'])->group(function () {
+       //incharge only
+       Route::get('/i/test', function (){
+        return "hi incharge";
+    });
+    });
+    Route::middleware(['checkRole:1,2'])->group(function () {
+    
+        Route::get('/c/test', function (){
+            return "hi common";
+        });
+    });
+
+    Route::middleware(['checkRole:5'])->group(function () {
+        //student only
+        Route::get('s/test', function (){
+            return "hi student";
+        });
+    });
+
+
+
+
+
+
 
     Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
@@ -64,6 +91,12 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('/post/{postid}/comment/',[CommentController::class,'store']);
 });
     
+
+
+
+
+
+
 Route::get('/categories',[CategoryController::class, 'index'])->name('getCategories');
 
 Route::get('/frontendmedia',[FrontendMediaController::class,'show']);

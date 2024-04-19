@@ -14,14 +14,11 @@ class CheckRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle($request, Closure $next, $role)
     {
-        $user = Auth::user();
-
-        if ($user && $user->role == 1) {
-            return $next($request);
+        if ($request->user()->role != $role) {
+            abort(403, 'Unauthorized action.');
         }
-
-        return response()->json(['error' => 'Unauthorized'], 401);
+        return $next($request);
     }
 }
