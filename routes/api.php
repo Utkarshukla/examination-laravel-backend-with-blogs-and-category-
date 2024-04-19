@@ -27,6 +27,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\FrontendMediaController;
 use App\Http\Controllers\Auth\GoogleLoginController;
 use App\Http\Controllers\ContactForm;
+use App\Http\Controllers\OlympiadController;
 
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 Route::post('/login',[LoginController::class,"login"]);
@@ -51,6 +52,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/a/test', function (){
             return "hi superadmin";
         });
+        Route::post('/admin/olympiad/create',[OlympiadController::class,'create' ]);
        
     });
     //incharge only
