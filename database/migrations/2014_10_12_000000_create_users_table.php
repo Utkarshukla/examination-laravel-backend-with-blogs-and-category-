@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('gender')->nullable(); //school
             $table->date('dob')->nullable();//student 
             $table->tinyInteger('role')->default(5); //admin:1 school:2 approval:6 student:5
-            $table->string('city'); //stduent
+            $table->string('city')->nullable(); //stduent
             $table->string('district'); //stduent
             $table->string('state')->default('Andhra Pradesh');
             $table->string('pincode'); //stduent
