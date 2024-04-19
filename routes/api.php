@@ -43,7 +43,7 @@ Route::get('/verify-email/{email}/{token}', [LoginController::class, 'verifyEmai
 
 // Post Routes
 Route::get('/posts', [PostController::class, 'showAll'])->name('posts.showAll');
-
+Route::get('/olympiads',[OlympiadController::class,'index']);
 //Routes for logged in user 
 Route::group(['middleware' => ['auth:api']], function () {
     //admin only

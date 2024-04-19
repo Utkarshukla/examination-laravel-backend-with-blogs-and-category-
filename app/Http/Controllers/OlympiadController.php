@@ -14,7 +14,7 @@ class OlympiadController extends Controller
      */
     public function index()
     {
-        //
+        return Olympiad::with('subjects')->get();
     }
 
     /**
