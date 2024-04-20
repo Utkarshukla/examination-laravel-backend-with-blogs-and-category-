@@ -14,7 +14,7 @@ class OlympiadController extends Controller
      */
     public function index()
     {
-        return Olympiad::with('subjects')->get();
+        return Olympiad::get();
     }
 
     /**
@@ -67,15 +67,17 @@ class OlympiadController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Olympiad $olympiad)
+    public function show(string $id)
     {
-        //
+        $olympiad = Olympiad::with('subjects')->find($id);
+        return response()->json(['status' => 'success','data'=>$olympiad]);
     }
 
     /**
@@ -89,16 +91,77 @@ class OlympiadController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Olympiad $olympiad)
+    public function update(Request $request, string $id)
     {
-        //
+        // Find the Olympiad by ID
+        $olympiad = Olympiad::find($id);
+
+        // If Olympiad doesn't exist, return error
+        if (!$olympiad) {
+            return response()->json(['error' => 'Olympiad not found'], 404);
+        }
+
+        // Validate request data for Olympiad
+        $validator = Validator::make($request->all(), [
+            'name' => ['string'],
+            'description' => ['string'],
+            'start_date' => ['date'],
+            'end_date' => ['date'],
+            'status' => ['boolean'],
+            'registration_deadline' => ['date'], // Fixed typo here
+            'author_id' => ['exists:users,id'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        // Update Olympiad details
+        $olympiad->fill($request->all())->save();
+
+        // Update associated subjects
+        foreach ($request->input('subject') as $subjectData) {
+            // Find the subject by its ID
+            $subject = Subject::find($subjectData['id']);
+
+            // If subject doesn't exist, skip
+            if (!$subject) {
+                continue;
+            }
+
+            // Validate request data for Subject
+            $subjectValidator = Validator::make($subjectData, [
+                'subject' => ['string'],
+                'subject_class' => ['string'],
+                'subject_fee' => ['numeric'],
+            ]);
+
+            if ($subjectValidator->fails()) {
+                return response()->json(['error' => $subjectValidator->errors()], 422);
+            }
+
+            // Update subject details
+            $subject->fill($subjectData)->save();
+        }
+
+        return response()->json(['status' => 'success', 'message' => 'Olympiad and associated subjects updated successfully', 'data' => $olympiad]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Olympiad $olympiad)
+    public function destroy(string $id)
     {
-        //
+        $olympiad = Olympiad::find($id);
+
+        if (!$olympiad) {
+            return response()->json(['error' => 'Olympiad not found'], 404);
+        }
+
+        Subject::where('olympiad_id', $olympiad->id)->delete();
+
+        $olympiad->delete();
+
+        return response()->json(['status' => 'success', 'message' => 'Olympiad deleted successfully']);
     }
 }

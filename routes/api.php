@@ -44,6 +44,7 @@ Route::get('/verify-email/{email}/{token}', [LoginController::class, 'verifyEmai
 // Post Routes
 Route::get('/posts', [PostController::class, 'showAll'])->name('posts.showAll');
 Route::get('/olympiads',[OlympiadController::class,'index']);
+Route::get('/olympiads/{id}',[OlympiadController::class,'show']);
 //Routes for logged in user 
 Route::group(['middleware' => ['auth:api']], function () {
     //admin only
@@ -53,6 +54,8 @@ Route::group(['middleware' => ['auth:api']], function () {
             return "hi superadmin";
         });
         Route::post('/admin/olympiad/create',[OlympiadController::class,'create' ]);
+        Route::put('/admin/olympiad/update/{id}',[OlympiadController::class,'update' ]);
+        Route::delete('/admin/olympiad/destroy/{id}',[OlympiadController::class,'destroy' ]);
        
     });
     //incharge only
@@ -83,6 +86,8 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/c/test', function (){
             return "hi common";
         });
+        
+        Route::get('/olympiads/{id}',[OlympiadController::class,'show']);
     });
 
 
