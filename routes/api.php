@@ -28,6 +28,8 @@ use App\Http\Controllers\FrontendMediaController;
 use App\Http\Controllers\Auth\GoogleLoginController;
 use App\Http\Controllers\ContactForm;
 use App\Http\Controllers\OlympiadController;
+use App\Http\Controllers\ParticipateController;
+use App\Http\Controllers\SchoolController;
 
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 Route::post('/login',[LoginController::class,"login"]);
@@ -43,16 +45,18 @@ Route::get('/verify-email/{email}/{token}', [LoginController::class, 'verifyEmai
 
 // Post Routes
 Route::get('/posts', [PostController::class, 'showAll'])->name('posts.showAll');
+
+Route::get('/school',[SchoolController::class, 'index']);
+Route::get('/school/{id}',[SchoolController::class,'show']);
 Route::get('/olympiads',[OlympiadController::class,'index']);
 Route::get('/olympiads/{id}',[OlympiadController::class,'show']);
 //Routes for logged in user 
 Route::group(['middleware' => ['auth:api']], function () {
     //admin only
     Route::middleware(['checkRole:1'])->group(function () {
-    
-        Route::get('/a/test', function (){
-            return "hi superadmin";
-        });
+        Route::post('/school/create',[SchoolController::class,'create']);
+        Route::put('/school/update/{id}', [SchoolController::class,'update']);
+        Route::delete('/school/delete/{id}',[SchoolController::class,'destroy']);
         Route::post('/admin/olympiad/create',[OlympiadController::class,'create' ]);
         Route::put('/admin/olympiad/update/{id}',[OlympiadController::class,'update' ]);
         Route::delete('/admin/olympiad/destroy/{id}',[OlympiadController::class,'destroy' ]);
@@ -60,24 +64,19 @@ Route::group(['middleware' => ['auth:api']], function () {
     });
     //incharge only
     Route::middleware(['checkRole:2'])->group(function () {
-       
         Route::get('/i/test', function (){
             return "hi incharge";
         });
     });
 
     Route::middleware(['checkRole:1,2'])->group(function () {
-    
         Route::get('/c/test', function (){
             return "hi common";
         });
     });
     //student only
     Route::middleware(['checkRole:5'])->group(function () {
-        
-        Route::get('s/test', function (){
-            return "hi student";
-        });
+        Route::post('/student/olympiad/register',[ParticipateController::class,'create']);
     });
 
     //for all user
@@ -121,3 +120,85 @@ Route::post('/contact',[ContactForm::class, 'index']);
 
 Route::get('/auth/google/redirect', [GoogleLoginController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback']);
+
+
+
+// Incharge Creation 
+// http://127.0.0.1:8000/register
+// {
+//     "name": "John Doe",
+//     "email": "test@gmail.com",
+//     "phone": "1234567890",
+//     "gender": "Male",
+//     "city": "New York",
+//     "district": "Manhattan",
+//     "pincode": 10001,
+//     "school_id":3,
+//     "state":"Andra Pradesh",
+//     "password": "test@gmail.com",
+//     "register_as_student":false
+// }
+
+// School create 
+// http://127.0.0.1:8000/school/create with bearer token 
+// {
+//   "school_name":"school 1",
+//   "school_landmark":"school 1 adderess",
+//   "school_city":"school city 1",
+//   "school_district":"Vijaywada",
+//   "school_state":"Andra Pradesh",
+//   "school_unique_code":"MTO00001",
+//   "author_id":3
+// }
+
+// get schools 
+// http://127.0.0.1:8000/school/
+
+// get school
+// http://127.0.0.1:8000/school/{id}
+
+// student register 
+// http://127.0.0.1:8000/register
+// {
+//     "name": "John Doe",
+//     "email": "test11@gmail.com",
+//     "aadhar_number":762123066333,
+//     "phone": "1234567890",
+//     "father": "Male",
+//     "mother":"female",
+//     "class": 7,
+//     "dob":"2002-10-04",
+//     "city": "New York",
+//     "district": "Manhattan",
+//     "pincode": 10001,
+//     "school_id":2,
+//     "state":"Andra Pradesh",
+//     "password": "test11@gmail.com",
+//      "register_as_student":true
+// }
+
+
+// olympiad register
+// {
+//   "user_id":4,
+//   "school_id":2,
+//   "olympiad_id":2,
+//   "subjects":[2,3,4]
+// }
+
+
+
+
+// dummy record after pull
+// cmd
+// php artisan migrate:refresh
+
+//  at phpmyadmin
+
+// INSERT INTO users (name, email, role, district, state, pincode, password, created_at, updated_at)
+// VALUES ('Super Admin', 'admin@gmail.com', 1, 'Vijaywada', 'Andhra Pradesh', '226020', '$2y$10$OJci2for5JSr21Zeh0xUAuXHTxd9.M0F9PR0Ulvh/3pGrJxr9HSCq ', NOW(), NOW());
+
+//  at cmd
+// php artisan db:seed
+
+

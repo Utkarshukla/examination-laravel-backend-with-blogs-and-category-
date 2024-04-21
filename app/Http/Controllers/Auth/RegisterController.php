@@ -20,6 +20,7 @@ class RegisterController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'email', 'max:255'],
+                'aadhar_number'=> ['required','numeric','digits:12'],
                 'phone' => ['required'],
                 'father' => ['required', 'string', 'max:255'],
                 'mother' => ['required', 'string', 'max:255'],
@@ -28,7 +29,7 @@ class RegisterController extends Controller
                 'city' => ['required', 'string'],
                 'district' => ['required', 'string'],
                 'pincode' => ['required', 'numeric'],
-                'school' => ['required', 'string'],
+                'school_id' => ['required', 'numeric'],
                 'password' => ['required'],
             ]);
             if ($validator->fails()) {
@@ -51,7 +52,8 @@ class RegisterController extends Controller
                 'city' => ['required', 'string'],
                 'district' => ['required', 'string'],
                 'pincode' => ['required', 'numeric'],
-                'school' => ['required', 'string'],
+               // 'school_id' => ['required', 'numeric'],
+                'state'=>['required','string'],
                 'password' => ['required'],
             ]);
         

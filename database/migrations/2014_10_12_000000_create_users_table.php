@@ -13,24 +13,24 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); //stduent //school
-            $table->string('email'); //stduent //school
+            $table->string('name'); 
+            $table->string('email'); 
+            $table->unsignedBigInteger('aadhar_number')->nullable();
             $table->timestamp('email_verified_at')->nullable(); 
-            $table->string('phone')->nullable(); //stduent //school
-            $table->string('father')->nullable(); //stduent 
-            $table->string('mother')->nullable(); //stduent
-            $table->integer('class')->nullable(); //stduent
-            $table->string('gender')->nullable(); //school
-            $table->date('dob')->nullable();//student 
+            $table->string('phone')->nullable(); 
+            $table->string('father')->nullable();  
+            $table->string('mother')->nullable(); 
+            $table->integer('class')->nullable(); 
+            $table->string('gender')->nullable(); 
+            $table->date('dob')->nullable();
             $table->tinyInteger('role')->default(5); //admin:1 school:2 approval:6 student:5
-            $table->string('city')->nullable(); //stduent
-            $table->string('district'); //stduent
-            $table->string('state')->default('Andhra Pradesh');
-            $table->string('pincode'); //stduent
-            $table->string('school');//student //school
-            $table->string('school-code')->nullable(); 
+            $table->string('city')->nullable(); 
+            $table->string('district');
+            $table->string('state');
+            $table->string('pincode'); 
+            $table->unsignedBigInteger('school_id')->nullable();
             $table->string('google_id')->nullable();
-            $table->string('password')->nullable(); //student //school
+            $table->string('password')->nullable(); 
             $table->rememberToken();
             $table->timestamps();
         });
