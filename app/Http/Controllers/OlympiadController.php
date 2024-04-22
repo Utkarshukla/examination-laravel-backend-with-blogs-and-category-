@@ -34,6 +34,7 @@ class OlympiadController extends Controller
             'subject.*.subject' => ['required', 'string'],
             'subject.*.subject_class' => ['required', 'string'],
             'subject.*.subject_fee' => ['required', 'numeric'],
+            'subject.*.subject_marks' => ['required', 'numeric'],
         ]);
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 422);
@@ -49,13 +50,13 @@ class OlympiadController extends Controller
             'author_id' => $request->input('author_id'),
         ]);
     
-        // Create subjects associated with the olympiad
         foreach ($request->input('subject') as $subjectData) {
             Subject::create([
                 'olympiad_id' => $olympiad->id,
                 'subject' => $subjectData['subject'],
                 'subject_class' => $subjectData['subject_class'],
                 'subject_fee' => $subjectData['subject_fee'],
+                'subject_marks' => $subjectData['subject_marks']
             ]);
         }
     
@@ -93,15 +94,12 @@ class OlympiadController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // Find the Olympiad by ID
         $olympiad = Olympiad::find($id);
 
-        // If Olympiad doesn't exist, return error
         if (!$olympiad) {
             return response()->json(['error' => 'Olympiad not found'], 404);
         }
 
-        // Validate request data for Olympiad
         $validator = Validator::make($request->all(), [
             'name' => ['string'],
             'description' => ['string'],
@@ -116,7 +114,6 @@ class OlympiadController extends Controller
             return response()->json(['error' => $validator->errors()], 422);
         }
 
-        // Update Olympiad details
         $olympiad->fill($request->all())->save();
 
         // Update associated subjects
@@ -134,6 +131,7 @@ class OlympiadController extends Controller
                 'subject' => ['string'],
                 'subject_class' => ['string'],
                 'subject_fee' => ['numeric'],
+                'subject_marks'=>['numeric']
             ]);
 
             if ($subjectValidator->fails()) {

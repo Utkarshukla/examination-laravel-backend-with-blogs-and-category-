@@ -86,7 +86,7 @@ Route::group(['middleware' => ['auth:api']], function () {
             return "hi common";
         });
         
-        Route::get('/olympiads/{id}',[OlympiadController::class,'show']);
+        //Route::get('/olympiads/{id}',[OlympiadController::class,'show']);
     });
 
 
