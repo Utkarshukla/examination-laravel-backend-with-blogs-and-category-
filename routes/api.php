@@ -45,7 +45,6 @@ Route::get('/verify-email/{email}/{token}', [LoginController::class, 'verifyEmai
 Route::post('/olympiad/register/bulk/',[BulkParticipateController::class,'create']);
 
 // Post Routes
-Route::get('/posts', [PostController::class, 'showAll'])->name('posts.showAll');
 
 Route::get('/school',[SchoolController::class, 'index']);
 Route::get('/school/{id}',[SchoolController::class,'show']);
@@ -198,7 +197,7 @@ Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogle
 //  at phpmyadmin
 
 // INSERT INTO users (name, email, role, district, state, pincode, password, created_at, updated_at)
-// VALUES ('Super Admin', 'admin@gmail.com', 1, 'Vijaywada', 'Andhra Pradesh', '226020', '$2y$12$cfihdKyH1ybp6ngG6LoKhu6yZgZxzuJMwEbf8onKY4tWC2RJiZ9mC', NOW(), NOW());
+// VALUES ('Super Admin', 'admin@gmail.com', 1, 'Vijaywada', 'Andhra Pradesh', '226020', '$2y$12$mDoAYccPb5lGYscGJ8zGi.3PFCI47tzS33I8Zvi8xSB09P3RhZeWC', NOW(), NOW());
 
 //  at cmd
 // php artisan db:seed

@@ -46,7 +46,7 @@ class ParticipateController extends Controller
         $totalMarks = 0;
         $totalFee = 0;
         foreach ($subjcet_Data as $subject) {
-            $totalMarks += $subject->subject_fee;
+            $totalMarks += $subject->subject_marks;
             $totalFee += $subject->subject_fee;
         }
 
