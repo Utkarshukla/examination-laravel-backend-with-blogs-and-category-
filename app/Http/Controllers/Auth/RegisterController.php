@@ -52,7 +52,7 @@ class RegisterController extends Controller
                 'city' => ['required', 'string'],
                 'district' => ['required', 'string'],
                 'pincode' => ['required', 'numeric'],
-               // 'school_id' => ['required', 'numeric'],
+                'school_id' => ['required', 'numeric'],
                 'state'=>['required','string'],
                 'password' => ['required'],
             ]);
