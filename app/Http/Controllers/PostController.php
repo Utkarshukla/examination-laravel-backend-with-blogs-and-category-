@@ -64,6 +64,7 @@ class PostController extends Controller
     }
 
     public function showAll(){
+        
         $posts = Post::with('tags', 'categories')->paginate(5);
         return response()->json($posts);
     }

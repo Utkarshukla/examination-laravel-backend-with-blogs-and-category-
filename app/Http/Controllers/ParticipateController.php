@@ -8,7 +8,7 @@ use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
+use Tymon\JWTAuth\Facades\JWTAuth;
 class ParticipateController extends Controller
 {
     /**
@@ -24,9 +24,10 @@ class ParticipateController extends Controller
      */
     public function create(Request $request)
     {
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id =$user->id;
+        $school_id= $user->school_id;
         $validator = Validator::make($request->all(),[
-            'user_id'=>['required'],
-            'school_id'=>['required'],
             'olympiad_id'=>['required'],
             'subjects'=>['required']
         ]);
@@ -49,7 +50,7 @@ class ParticipateController extends Controller
             $totalFee += $subject->subject_fee;
         }
 
-        $class=User::select('class','aadhar_number')->find($request->user_id);
+        $class=User::select('class','aadhar_number')->find($user_id);
         $requestData=$request->all();
         $requestData['class']=$class->class;
         $requestData['aadhar_number']=$class->aadhar_number;
@@ -57,8 +58,8 @@ class ParticipateController extends Controller
         $requestData['total_fee']=$totalFee;
          
         $participates=Participate::create([
-            'user_id'=>$requestData['user_id'],
-            'school_id'=>$requestData['school_id'],
+            'user_id'=>$user_id,
+            'school_id'=>$school_id,
             'olympiad_id'=>$requestData['olympiad_id'],
             'aadhar_number'=>$requestData['aadhar_number'],
             'class'=>$requestData['class'],
@@ -68,7 +69,7 @@ class ParticipateController extends Controller
         foreach ($request->input('subjects') as $subjectData) {
             ParticipantSubject::create([
                 'participant_id' => $participates->id,
-                'student_id' => $requestData['user_id'],
+                'student_id' => $user_id,
                 'subject_id' => $subjectData
             ]);
         }

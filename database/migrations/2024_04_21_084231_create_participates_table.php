@@ -32,6 +32,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('olympiad_id')->references('id')->on('olympiads');
             $table->foreign('school_id')->references('id')->on('schools');
+            $table->unsignedBigInteger('created_by')->default(0);
             // $table->foreign('payment_id')->references('id')->on('payments');
             $table->timestamps();
         });

@@ -6,7 +6,7 @@ use App\Models\Olympiad;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
+use Tymon\JWTAuth\Facades\JWTAuth;
 class OlympiadController extends Controller
 {
     /**
@@ -22,6 +22,9 @@ class OlympiadController extends Controller
      */
     public function create(Request $request)
     {
+        $user = JWTAuth::parseToken()->authenticate();
+         $user_id =$user->id;
+         $user_role=$user->role;
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string'],
             'description' => ['required', 'string'],
@@ -29,7 +32,6 @@ class OlympiadController extends Controller
             'end_date' => ['required', 'date'],
             'status' => ['required', 'boolean'],
             'registration_deadline' => ['required', 'date'], // Fixed typo here
-            'author_id' => ['required', 'exists:users,id'], 
             'subject' => ['required', 'array', 'min:1'], 
             'subject.*.subject' => ['required', 'string'],
             'subject.*.subject_class' => ['required', 'string'],
@@ -39,7 +41,9 @@ class OlympiadController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 422);
         }
-        
+        if($user_role !=1){
+            return response()->json(['error'=>"You don't have access to create Olypiad"],422);
+        }
         $olympiad = Olympiad::create([
             'name' => $request->input('name'),
             'description' => $request->input('description'),
@@ -47,7 +51,7 @@ class OlympiadController extends Controller
             'end_date' => $request->input('end_date'),
             'status' => $request->input('status'),
             'registration_deadline'=>$request->input('registration_deadline'),
-            'author_id' => $request->input('author_id'),
+            'author_id' => $user_id,
         ]);
     
         foreach ($request->input('subject') as $subjectData) {

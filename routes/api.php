@@ -197,7 +197,7 @@ Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogle
 //  at phpmyadmin
 
 // INSERT INTO users (name, email, role, district, state, pincode, password, created_at, updated_at)
-// VALUES ('Super Admin', 'admin@gmail.com', 1, 'Vijaywada', 'Andhra Pradesh', '226020', '$2y$10$OJci2for5JSr21Zeh0xUAuXHTxd9.M0F9PR0Ulvh/3pGrJxr9HSCq ', NOW(), NOW());
+// VALUES ('Super Admin', 'admin@gmail.com', 1, 'Vijaywada', 'Andhra Pradesh', '226020', '$2y$12$cfihdKyH1ybp6ngG6LoKhu6yZgZxzuJMwEbf8onKY4tWC2RJiZ9mC', NOW(), NOW());
 
 //  at cmd
 // php artisan db:seed

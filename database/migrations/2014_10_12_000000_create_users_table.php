@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('state');
             $table->string('pincode'); 
             $table->unsignedBigInteger('school_id')->nullable();
+            $table->unsignedBigInteger('created_by')->default(0);
             $table->string('google_id')->nullable();
             $table->string('password')->nullable(); 
             $table->rememberToken();
