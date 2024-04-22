@@ -66,8 +66,8 @@ class RegisterController extends Controller
             $requestData['created_by']=0;
             unset($requestData['register_as_student']);
             $user =User::create($requestData);
-            $token = JWTAuth::fromUser($user);
-            return response()->json(['status'=>'success','user' => $user, 'token' => $token]);
+            //$token = JWTAuth::fromUser($user);
+            return response()->json(['status'=>'success','message'=>'Successfully registered!, Wait for Admin Approval']);
            
         }
         

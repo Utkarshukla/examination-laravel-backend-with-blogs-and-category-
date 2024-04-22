@@ -24,7 +24,7 @@ class SchoolFactory extends Factory
             'school_city'=>fake()->city(),
             'school_district'=>fake()->city(),
             'school_state'=>fake()->city(),
-            'school_unique_code'=>fake()->unique()->text(),
+            'school_unique_code'=>fake()->unique()->userName(),
             'author_id'=>1,
         ];
     }

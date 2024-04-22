@@ -26,6 +26,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\FrontendMediaController;
 use App\Http\Controllers\Auth\GoogleLoginController;
+use App\Http\Controllers\BulkParticipateController;
 use App\Http\Controllers\ContactForm;
 use App\Http\Controllers\OlympiadController;
 use App\Http\Controllers\ParticipateController;
@@ -41,7 +42,7 @@ Route::get('/verify-email/{email}/{token}', [LoginController::class, 'verifyEmai
 
 
 
-
+Route::post('/olympiad/register/bulk/',[BulkParticipateController::class,'create']);
 
 // Post Routes
 Route::get('/posts', [PostController::class, 'showAll'])->name('posts.showAll');
