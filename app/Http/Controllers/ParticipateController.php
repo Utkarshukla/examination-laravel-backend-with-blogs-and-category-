@@ -56,7 +56,6 @@ class ParticipateController extends Controller
         $requestData['aadhar_number']=$class->aadhar_number;
         $requestData['total_marks']=$totalMarks;
         $requestData['total_fee']=$totalFee;
-         
         $participates=Participate::create([
             'user_id'=>$user_id,
             'school_id'=>$school_id,
@@ -64,7 +63,8 @@ class ParticipateController extends Controller
             'aadhar_number'=>$requestData['aadhar_number'],
             'class'=>$requestData['class'],
             'total_amount'=>$requestData['total_fee'],
-            'total_marks'=>$requestData['total_marks']
+            'total_marks'=>$requestData['total_marks'],
+            'created_by'=>$user_id
         ]);
         foreach ($request->input('subjects') as $subjectData) {
             ParticipantSubject::create([
