@@ -87,20 +87,13 @@ class ParticipateController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request)
+    public function show(Request $request, string $id)
     {
         $user = JWTAuth::parseToken()->authenticate();
         $user_id =$user->id;
-        $validator = Validator::make($request->all(),[
-            'olympiad_id'=>['required','numeric'],
-        ]);
-        if($validator->fails()){
-            return response()->json(['error'=>$validator->errors()],422);
-        }
-        $data=$request->all();
-        $data['user_id']= $user_id;
-        $participatesData=Participate::where('olympiad_id', $data['olympiad_id'])
-                            ->where('user_id', $data['user_id'])
+        $oid=$id;
+        $participatesData=Participate::where('olympiad_id', $oid)
+                            ->where('user_id', $user_id)
                             ->firstOrFail(); 
         if($participatesData->total_ammount_locked == false && $participatesData->isfullPaid == false){
             return response()->json(['message'=>'payment ammount not locked and not paid','data'=>$participatesData]);
@@ -112,19 +105,14 @@ class ParticipateController extends Controller
 
     }
 
-    public function lock_register(Request $request){
+    public function lock_register(Request $request, string $id){
         $user = JWTAuth::parseToken()->authenticate();
         $user_id=$user->id;
-        $validator = Validator::make($request->all(),[
-            'olympiad_id'=>['required','numeric'],
-        ]);
-        if($validator->fails()){
-            return response()->json(['error'=>$validator->errors()],422);
-        }
+        $oid=$id;
         $data=$request->all();
         $data['user_id']= $user_id;
-        $participate = Participate::where('olympiad_id', $data['olympiad_id'])
-                               ->where('user_id', $data['user_id'])
+        $participate = Participate::where('olympiad_id', $oid)
+                               ->where('user_id',$user_id)
                                ->first(); // or findOrFail() if it's guaranteed to exist
 
         if($participate) {
@@ -132,29 +120,23 @@ class ParticipateController extends Controller
                 'total_ammount_locked' => true
             ]);
 
-            return response()->json(['status' => 'success', 'data' => 'Payment amount locked. Proceeded for Checkout'], 201);
+            return response()->json(['status' => 'success', 'data' => 'proceeded-to-checkout'], 201);
         } else {
             return response()->json(['error' => 'Participation record not found'], 404);
         }
         
     }
 
-    public function makepayment(Request $request){
+    public function makepayment(Request $request,string $id){
         $user = JWTAuth::parseToken()->authenticate();
         $user_id=$user->id;
-        $validator = Validator::make($request->all(),[
-            'olympiad_id'=>['required','numeric'],
-        ]);
-        if($validator->fails()){
-            return response()->json(['error'=>$validator->errors()],422);
-        }
-        $data=$request->all();
-        $data['user_id']= $user_id;
-        $participate = Participate::where('olympiad_id', $data['olympiad_id'])
-                               ->where('user_id', $data['user_id'])
-                               ->firstOrFail(); 
+        $oid=$id;
+        $participate = Participate::where('olympiad_id', $oid)
+                               ->where('user_id',$user_id)
+                               ->first(); // or findOrFail() if it's guaranteed to exist
+
         $price = $participate->total_amount;
-        $id= $participate->id;
+        $participateid= $participate->id;
         //payment gateway api
         //if(payment=="success"){
             $participate->update([
