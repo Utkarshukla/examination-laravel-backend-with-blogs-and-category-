@@ -58,11 +58,11 @@ Route::group(['middleware' => ['auth:api']], function () {
     //incharge only
     Route::middleware(['checkRole:2'])->group(function () {
         
-        Route::get('/incharge/olympiad/{id}/registered',[BulkParticipateController::class,'show']);
-        Route::post('/incharge/olympiad/register/',[BulkParticipateController::class,'create']);   
     });
     //admin, incharge
-    Route::middleware(['checkRole:1,2'])->group(function () { 
+    Route::middleware(['checkRole:1,2'])->group(function () {
+        Route::post('/incharge/olympiad/register/',[BulkParticipateController::class,'create']);    
+        Route::get('/incharge/olympiad/{id}/registered',[BulkParticipateController::class,'show']);
     });
     //student only
     Route::middleware(['checkRole:5'])->group(function () {
@@ -76,11 +76,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::middleware(['checkRole:1,2,3'])->group(function () {
         
     });
-    Route::get('/profile',[UserController::class,'show']);
-    Route::middleware(['checkRole:1,2,5'])->group(function () {
-        Route::get('/t/t',function(){
-            return 'hi test';
-        });
+    Route::middleware(['checkRole:1,2,3,4,5'])->group(function () {
         Route::get('/profile',[UserController::class,'show']);
         Route::put('/profile/update',[UserController::class,'update']);
         Route::delete('/profile/delete',[UserController::class,'show']);
