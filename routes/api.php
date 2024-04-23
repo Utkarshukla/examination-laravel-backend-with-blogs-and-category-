@@ -61,7 +61,6 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('/admin/olympiad/create',[OlympiadController::class,'create' ]);
         Route::put('/admin/olympiad/update/{id}',[OlympiadController::class,'update' ]);
         Route::delete('/admin/olympiad/destroy/{id}',[OlympiadController::class,'destroy' ]);
-       
     });
     //incharge only
     Route::middleware(['checkRole:2'])->group(function () {
@@ -70,18 +69,15 @@ Route::group(['middleware' => ['auth:api']], function () {
     });
 
     Route::middleware(['checkRole:1,2'])->group(function () {
-        Route::get('/c/test', function (){
-            return "hi common";
-        });
-        
-    Route::post('/olympiad/register/bulk/',[BulkParticipateController::class,'create']);    
+
+        Route::post('/incharge/olympiad/register/',[BulkParticipateController::class,'create']);    
     });
     //student only
     Route::middleware(['checkRole:5'])->group(function () {
         Route::post('/student/olympiad/register',[ParticipateController::class,'create']);  
-        Route::post('/student/olympiad/registered',[ParticipateController::class,'show']);
-        Route::post('/lock-payment',[ParticipateController::class,'lock_register']);
-        Route::post('/checkout',[ParticipateController::class,'makepayment']);
+        Route::post('/student/olympiad/{id}/registered',[ParticipateController::class,'show']);
+        Route::post('/student/olympiad/{id}/lock-payment',[ParticipateController::class,'lock_register']);
+        Route::post('/student/olympida/{id}/checkout',[ParticipateController::class,'makepayment']);
     });
 
     //for all user
