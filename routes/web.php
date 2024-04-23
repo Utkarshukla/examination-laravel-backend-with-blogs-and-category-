@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 use App\Http\Controllers\Auth\GoogleLoginController;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -20,3 +21,11 @@ Route::get('/', function () {
 // routes/web.php
 Route::get('/auth/google/redirect', [GoogleLoginController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback']);
+
+
+
+Route::get('/checkout',[PaymentController::class,'checkout']);
+Route::get('/sucess',[PaymentController::class,'success']);
+Route::get('/cancel',[PaymentController::class,'cancel']);
+
+

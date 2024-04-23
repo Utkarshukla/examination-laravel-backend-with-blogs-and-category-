@@ -19,6 +19,7 @@ use App\Http\Controllers\BulkParticipateController;
 use App\Http\Controllers\ContactForm;
 use App\Http\Controllers\OlympiadController;
 use App\Http\Controllers\ParticipateController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\UserController;
 
