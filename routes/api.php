@@ -61,6 +61,12 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('/admin/olympiad/create',[OlympiadController::class,'create' ]);
         Route::put('/admin/olympiad/update/{id}',[OlympiadController::class,'update' ]);
         Route::delete('/admin/olympiad/destroy/{id}',[OlympiadController::class,'destroy' ]);
+
+        Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+        Route::put('/posts/{id}', [PostController::class, 'update'])->name('posts.update');
+        Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
+
+        Route::post('/category',[CategoryController::class, 'store'])->name('postCategories');
     });
     //incharge only
     Route::middleware(['checkRole:2'])->group(function () {
@@ -69,7 +75,6 @@ Route::group(['middleware' => ['auth:api']], function () {
     });
     //admin, incharge
     Route::middleware(['checkRole:1,2'])->group(function () {
-
         Route::post('/incharge/olympiad/register/',[BulkParticipateController::class,'create']);    
         Route::get('/incharge/olympiad/{id}/registered',[BulkParticipateController::class,'show']);
     });
@@ -85,28 +90,22 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::middleware(['checkRole:1,2,3'])->group(function () {
         
     });
-    Route::middleware(['checkRole:1,2,3,4,5,6'])->group(function () {
+    Route::middleware(['checkRole:1,2,3,4,5'])->group(function () {
         Route::get('/profile',[UserController::class,'show']);
         Route::put('/profile/update',[UserController::class,'update']);
         Route::delete('/profile/delete',[UserController::class,'show']);
+        
+        Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
     });
 
-    Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
-    Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
-    Route::put('/posts/{id}', [PostController::class, 'update'])->name('posts.update');
-    Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
+    
+    
     //Category Routes
-    Route::post('/category',[CategoryController::class, 'store'])->name('postCategories');
+    
 
     Route::get('/post/{postid}/comment/',[CommentController::class,'show']);
     Route::post('/post/{postid}/comment/',[CommentController::class,'store']);
 });
-    
-
-
-
-
-
 
 Route::get('/categories',[CategoryController::class, 'index'])->name('getCategories');
 
