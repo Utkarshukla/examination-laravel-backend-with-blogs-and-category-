@@ -12,17 +12,6 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CategoryController;
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
-
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\FrontendMediaController;
 use App\Http\Controllers\Auth\GoogleLoginController;
@@ -41,36 +30,33 @@ Route::middleware('auth:api')->get('/refresh-token', [LoginController::class, 'r
 Route::middleware('auth:api')->get('/verify-email', [LoginController::class, 'verifyEmail']);
 Route::get('/verify-email/{email}/{token}', [LoginController::class, 'verifyEmailToken']);
 
-
-
-
-// Post Routes
-
 Route::get('/school',[SchoolController::class, 'index']);
 Route::get('/school/{id}',[SchoolController::class,'show']);
 Route::get('/olympiads',[OlympiadController::class,'index']);
 Route::get('/olympiads/{id}',[OlympiadController::class,'show']);
 Route::get('/schools',[SchoolController::class,'index']);
+
 //Routes for logged in user 
 Route::group(['middleware' => ['auth:api']], function () {
     //admin only
     Route::middleware(['checkRole:1'])->group(function () {
-        Route::post('/school/create',[SchoolController::class,'create']);
-        Route::put('/school/update/{id}', [SchoolController::class,'update']);
-        Route::delete('/school/delete/{id}',[SchoolController::class,'destroy']);
+
+        Route::post('/admin/school/create',[SchoolController::class,'create']);
+        Route::put('/admin/school/update/{id}', [SchoolController::class,'update']);
+        Route::delete('/admin/school/delete/{id}',[SchoolController::class,'destroy']);
+
         Route::post('/admin/olympiad/create',[OlympiadController::class,'create' ]);
         Route::put('/admin/olympiad/update/{id}',[OlympiadController::class,'update' ]);
         Route::delete('/admin/olympiad/destroy/{id}',[OlympiadController::class,'destroy' ]);
 
-        Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
-        Route::put('/posts/{id}', [PostController::class, 'update'])->name('posts.update');
-        Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
+        Route::post('/admin/posts', [PostController::class, 'store'])->name('posts.store');
+        Route::put('/admin/posts/{id}', [PostController::class, 'update'])->name('posts.update');
+        Route::delete('/admin/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
 
-        Route::post('/category',[CategoryController::class, 'store'])->name('postCategories');
+        Route::post('/admin/category',[CategoryController::class, 'store'])->name('postCategories');
     });
     //incharge only
     Route::middleware(['checkRole:2'])->group(function () {
-        
         
     });
     //admin, incharge
@@ -96,15 +82,10 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::delete('/profile/delete',[UserController::class,'show']);
         
         Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
+
+        Route::get('/post/{postid}/comment/',[CommentController::class,'show']);
+        Route::post('/post/{postid}/comment/',[CommentController::class,'store']);
     });
-
-    
-    
-    //Category Routes
-    
-
-    Route::get('/post/{postid}/comment/',[CommentController::class,'show']);
-    Route::post('/post/{postid}/comment/',[CommentController::class,'store']);
 });
 
 Route::get('/categories',[CategoryController::class, 'index'])->name('getCategories');
