@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
+
 class ParticipateController extends Controller
 {
     /**
@@ -25,24 +26,24 @@ class ParticipateController extends Controller
     public function create(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        $user_id =$user->id;
-        $school_id= $user->school_id;
-        $validator = Validator::make($request->all(),[
-            'olympiad_id'=>['required'],
-            'subjects'=>['required']
+        $user_id = $user->id;
+        $school_id = $user->school_id;
+        $validator = Validator::make($request->all(), [
+            'olympiad_id' => ['required'],
+            'subjects' => ['required']
         ]);
-        if($validator->fails()){
-            return response()->json(['error'=>$validator->errors()],422);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
         }
-        $subjcet_Data=[];
-         
-        foreach($request->input('subjects') as $subject){
+        $subjcet_Data = [];
+
+        foreach ($request->input('subjects') as $subject) {
             $subject = Subject::find($subject);
             if ($subject) {
                 $subjcet_Data[] = $subject;
             }
         }
-       
+
         $totalMarks = 0;
         $totalFee = 0;
         foreach ($subjcet_Data as $subject) {
@@ -50,21 +51,21 @@ class ParticipateController extends Controller
             $totalFee += $subject->subject_fee;
         }
 
-        $class=User::select('class','aadhar_number')->find($user_id);
-        $requestData=$request->all();
-        $requestData['class']=$class->class;
-        $requestData['aadhar_number']=$class->aadhar_number;
-        $requestData['total_marks']=$totalMarks;
-        $requestData['total_fee']=$totalFee;
-        $participates=Participate::create([
-            'user_id'=>$user_id,
-            'school_id'=>$school_id,
-            'olympiad_id'=>$requestData['olympiad_id'],
-            'aadhar_number'=>$requestData['aadhar_number'],
-            'class'=>$requestData['class'],
-            'total_amount'=>$requestData['total_fee'],
-            'total_marks'=>$requestData['total_marks'],
-            'created_by'=>$user_id
+        $class = User::select('class', 'aadhar_number')->find($user_id);
+        $requestData = $request->all();
+        $requestData['class'] = $class->class;
+        $requestData['aadhar_number'] = $class->aadhar_number;
+        $requestData['total_marks'] = $totalMarks;
+        $requestData['total_fee'] = $totalFee;
+        $participates = Participate::create([
+            'user_id' => $user_id,
+            'school_id' => $school_id,
+            'olympiad_id' => $requestData['olympiad_id'],
+            'aadhar_number' => $requestData['aadhar_number'],
+            'class' => $requestData['class'],
+            'total_amount' => $requestData['total_fee'],
+            'total_marks' => $requestData['total_marks'],
+            'created_by' => $user_id
         ]);
         foreach ($request->input('subjects') as $subjectData) {
             ParticipantSubject::create([
@@ -73,7 +74,7 @@ class ParticipateController extends Controller
                 'subject_id' => $subjectData
             ]);
         }
-        return response()->json(['status'=>'success','data'=>$participates,'message'=>'data added successfully']);
+        return response()->json(['status' => 'success', 'data' => $participates, 'message' => 'data added successfully']);
     }
 
     /**
@@ -90,32 +91,39 @@ class ParticipateController extends Controller
     public function show(Request $request, string $id)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        $user_id =$user->id;
-        $oid=$id;
-        $participatesData=Participate::where('olympiad_id', $oid)
-                            ->where('user_id', $user_id)
-                            ->firstOrFail(); 
-        if($participatesData->total_ammount_locked == false && $participatesData->isfullPaid == false){
-            return response()->json(['message'=>'payment ammount not locked and not paid','data'=>$participatesData]);
-        } else if($participatesData->total_ammount_locked== true && $participatesData->isfullPaid == false) {
-            return response()->json(['message'=>'payment ammount locked , now make payment','data'=>$participatesData]);
-        } else{
-            return response()->json(['message'=>'all done, wait for admit card, exam info and certification','data'=>$participatesData]);
-        }
+        $user_id = $user->id;
+        $oid = $id;
 
+        $participatesData = Participate::where('olympiad_id', $oid)
+            ->where('user_id', $user_id)
+            ->firstOrFail();
+
+        if (!$participatesData->total_ammount_locked && !$participatesData->isfullPaid) {
+            $selectedSubject = ParticipantSubject::where('participant_id', $participatesData->id)->pluck('subject_id');
+
+            if ($selectedSubject->isNotEmpty()) {
+                $subjects = Subject::whereIn('id', $selectedSubject)->get(); // Use get() to retrieve subject models
+                return response()->json(['message' => 'Payment amount not locked and not paid', 'subjects' => $subjects]);
+            }
+        } elseif ($participatesData->total_ammount_locked && !$participatesData->isfullPaid) {
+            return response()->json(['message' => 'Payment amount locked, now make payment', 'data' => $participatesData]);
+        } else {
+            return response()->json(['message' => 'All done, wait for admit card, exam info, and certification', 'data' => $participatesData]);
+        }
     }
 
-    public function lock_register(Request $request, string $id){
+    public function lock_register(Request $request, string $id)
+    {
         $user = JWTAuth::parseToken()->authenticate();
-        $user_id=$user->id;
-        $oid=$id;
-        $data=$request->all();
-        $data['user_id']= $user_id;
+        $user_id = $user->id;
+        $oid = $id;
+        $data = $request->all();
+        $data['user_id'] = $user_id;
         $participate = Participate::where('olympiad_id', $oid)
-                               ->where('user_id',$user_id)
-                               ->first(); // or findOrFail() if it's guaranteed to exist
+            ->where('user_id', $user_id)
+            ->first(); // or findOrFail() if it's guaranteed to exist
 
-        if($participate) {
+        if ($participate) {
             $participate->update([
                 'total_ammount_locked' => true
             ]);
@@ -124,28 +132,27 @@ class ParticipateController extends Controller
         } else {
             return response()->json(['error' => 'Participation record not found'], 404);
         }
-        
     }
 
-    public function makepayment(Request $request,string $id){
+    public function makepayment(Request $request, string $id)
+    {
         $user = JWTAuth::parseToken()->authenticate();
-        $user_id=$user->id;
-        $oid=$id;
+        $user_id = $user->id;
+        $oid = $id;
         $participate = Participate::where('olympiad_id', $oid)
-                               ->where('user_id',$user_id)
-                               ->first(); // or findOrFail() if it's guaranteed to exist
+            ->where('user_id', $user_id)
+            ->first(); // or findOrFail() if it's guaranteed to exist
 
         $price = $participate->total_amount;
-        $participateid= $participate->id;
+        $participateid = $participate->id;
         //payment gateway api
         //if(payment=="success"){
-            $participate->update([
-               'isfullPaid'=>true,
-            ]);
-            //update payemt tabler
+        $participate->update([
+            'isfullPaid' => true,
+        ]);
+        //update payemt tabler
         //}
-        return response()->json(['status'=>'success','message'=>'Payment done']);
-
+        return response()->json(['status' => 'success', 'message' => 'Payment done']);
     }
 
     /**
