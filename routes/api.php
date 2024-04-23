@@ -64,40 +64,31 @@ Route::group(['middleware' => ['auth:api']], function () {
     });
     //incharge only
     Route::middleware(['checkRole:2'])->group(function () {
-        Route::post('/incharge/olympiad/{id}/registered',[BulkParticipateController::class,'show']);
+        
         
     });
-
+    //admin, incharge
     Route::middleware(['checkRole:1,2'])->group(function () {
 
         Route::post('/incharge/olympiad/register/',[BulkParticipateController::class,'create']);    
+        Route::get('/incharge/olympiad/{id}/registered',[BulkParticipateController::class,'show']);
     });
     //student only
     Route::middleware(['checkRole:5'])->group(function () {
         Route::post('/student/olympiad/register',[ParticipateController::class,'create']);  
-        Route::post('/student/olympiad/{id}/registered',[ParticipateController::class,'show']);
-        Route::post('/student/olympiad/{id}/lock-payment',[ParticipateController::class,'lock_register']);
-        Route::post('/student/olympida/{id}/checkout',[ParticipateController::class,'makepayment']);
+        Route::get('/student/olympiad/{id}/registered',[ParticipateController::class,'show']);
+        Route::get('/student/olympiad/{id}/lock-payment',[ParticipateController::class,'lock_register']);
+        Route::get('/student/olympida/{id}/checkout',[ParticipateController::class,'makepayment']);
     });
 
     //for all user
     Route::middleware(['checkRole:1,2,3'])->group(function () {
-    
-        Route::get('/c/test', function (){
-            return "hi common";
-        });
         
-        //Route::get('/olympiads/{id}',[OlympiadController::class,'show']);
     });
-
-
-
-
     Route::middleware(['checkRole:1,2,3,4,5,6'])->group(function () {
         Route::get('/profile',[UserController::class,'show']);
         Route::put('/profile/update',[UserController::class,'update']);
         Route::delete('/profile/delete',[UserController::class,'show']);
-        //Route::get('/olympiads/{id}',[OlympiadController::class,'show']);
     });
 
     Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
