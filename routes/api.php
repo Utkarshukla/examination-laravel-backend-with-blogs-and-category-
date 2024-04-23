@@ -65,9 +65,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     });
     //incharge only
     Route::middleware(['checkRole:2'])->group(function () {
-        Route::get('/i/test', function (){
-            return "hi incharge";
-        });
+        Route::post('/incharge/olympiad/{id}/registered',[BulkParticipateController::class,'show']);
+        
     });
 
     Route::middleware(['checkRole:1,2'])->group(function () {

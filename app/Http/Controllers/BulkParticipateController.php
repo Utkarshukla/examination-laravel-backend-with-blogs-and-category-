@@ -155,9 +155,13 @@ class BulkParticipateController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request,string $id)
     {
-        //
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id =$user->id;
+        $olympiad_id=$id;
+        $data= Participate::where('created_by',$user_id)->where('olympiad_id',$olympiad_id);
+        return response()->json(['status'=>'success','data'=>$data]);
     }
 
     /**
