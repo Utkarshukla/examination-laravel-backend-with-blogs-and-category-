@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\School;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class SchoolController extends Controller
 {
@@ -21,19 +22,23 @@ class SchoolController extends Controller
      */
     public function create(Request $request)
     {
+        $user=JWTAuth::parseToken()->authenticate();
+        $user_id=$user->id;
         $validator = Validator::make($request->all(), [
             'school_name' => ['required', 'string', 'max:255'],
             'school_landmark' => ['required', 'string', 'max:255'],
+            'school_email'=>['required','email','string', 'max:255'],
+            'school_phone'=>['required','string'],
             'school_city' => ['required', 'string', 'max:255'],
             'school_district' => ['required', 'string', 'max:255'],
             'school_state' => ['required', 'string', 'max:255'],
             'school_unique_code' => ['required', 'string', 'max:255'],
-            'author_id'=>['required','numeric']
         ]);
         if ($validator->fails()) {
             return response()->json(['status'=>'failure','error'=> $validator->errors()], 422);
         }
         $data = $request->all();
+        $data['author_id']=$user_id;
         $school = School::create($data);
         return response()->json(['status'=>'success','data'=>$school.' successfully added']);
     }
@@ -67,7 +72,39 @@ class SchoolController extends Controller
      */
     public function update(Request $request, School $school)
     {
-        //
+        $user=JWTAuth::parseToken()->authenticate();
+        $user_id=$user->id;
+        $validator = Validator::make($request->all(), [
+            'id'=>['required','numeric'],
+            'school_name' => ['required', 'string', 'max:255'],
+            'school_email'=>['required','email','string', 'max:255'],
+            'school_phone'=>['required','string'],
+            'school_landmark' => ['required', 'string', 'max:255'],
+            'school_city' => ['required', 'string', 'max:255'],
+            'school_district' => ['required', 'string', 'max:255'],
+            'school_state' => ['required', 'string', 'max:255'],
+            'school_unique_code' => ['required', 'string', 'max:255'],
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['status'=>'failure','error'=> $validator->errors()], 422);
+        }
+        $data = $request->all();
+        $data['author_id']=$user_id;
+        $school=School::find($request->id);
+        $school->update([
+            'school_name'=>$data['school_name'],
+            "school_email"=>$data['school_email'],
+            "school_phone"=>$data['school_phone'],
+            "school_landmark"=>$data['school_landmark'],
+            "school_city"=>$data['school_city'],
+            "school_district"=>$data['school_district'],
+            "school_state"=>$data['school_state'],
+            "school_unique_code"=>$data['school_unique_code'],
+            "author_id"=>$data['author_id']
+        ]);
+        
+        return response()->json(['status'=>'success','data'=>$school.' successfully updated']);
+    
     }
 
     /**
