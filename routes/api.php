@@ -76,6 +76,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::middleware(['checkRole:1,2,3'])->group(function () {
         
     });
+    Route::get('/profile',[UserController::class,'show']);
     Route::middleware(['checkRole:1,2,3,4,5'])->group(function () {
         Route::get('/profile',[UserController::class,'show']);
         Route::put('/profile/update',[UserController::class,'update']);
