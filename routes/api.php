@@ -42,7 +42,6 @@ Route::get('/verify-email/{email}/{token}', [LoginController::class, 'verifyEmai
 
 
 
-Route::post('/olympiad/register/bulk/',[BulkParticipateController::class,'create']);
 
 // Post Routes
 
@@ -74,6 +73,8 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/c/test', function (){
             return "hi common";
         });
+        
+    Route::post('/olympiad/register/bulk/',[BulkParticipateController::class,'create']);    
     });
     //student only
     Route::middleware(['checkRole:5'])->group(function () {
