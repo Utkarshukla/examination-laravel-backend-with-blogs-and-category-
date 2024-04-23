@@ -70,7 +70,7 @@ class SchoolController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, School $school)
+    public function update(Request $request, string $id)
     {
         $user=JWTAuth::parseToken()->authenticate();
         $user_id=$user->id;

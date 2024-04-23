@@ -31,6 +31,7 @@ use App\Http\Controllers\ContactForm;
 use App\Http\Controllers\OlympiadController;
 use App\Http\Controllers\ParticipateController;
 use App\Http\Controllers\SchoolController;
+use App\Http\Controllers\UserController;
 
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 Route::post('/login',[LoginController::class,"login"]);
@@ -78,7 +79,10 @@ Route::group(['middleware' => ['auth:api']], function () {
     });
     //student only
     Route::middleware(['checkRole:5'])->group(function () {
-        Route::post('/student/olympiad/register',[ParticipateController::class,'create']);
+        Route::post('/student/olympiad/register',[ParticipateController::class,'create']);  
+        Route::post('/student/olympiad/registered',[ParticipateController::class,'show']);
+        Route::post('/lock-payment',[ParticipateController::class,'lock_register']);
+        Route::post('/checkout',[ParticipateController::class,'makepayment']);
     });
 
     //for all user
@@ -94,7 +98,12 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 
 
-
+    Route::middleware(['checkRole:1,2,3,4,5,6'])->group(function () {
+        Route::get('/profile',[UserController::class,'show']);
+        Route::put('/profile/update',[UserController::class,'update']);
+        Route::delete('/profile/delete',[UserController::class,'show']);
+        //Route::get('/olympiads/{id}',[OlympiadController::class,'show']);
+    });
 
     Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');

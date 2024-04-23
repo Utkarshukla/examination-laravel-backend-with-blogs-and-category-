@@ -19,10 +19,10 @@ return new class extends Migration
             $table->unsignedBigInteger('aadhar_number')->nullable();
             $table->integer('class');
             $table->integer('total_amount')->nullable();
-            $table->boolean('total_ammount_locked')->nullable();
+            $table->boolean('total_ammount_locked')->nullable()->default(false);
             $table->string('payment_id')->nullable();
             $table->string('payment_type')->nullable();
-            $table->boolean('isfullPaid')->nullable();
+            $table->boolean('isfullPaid')->nullable()->default(false);
             $table->string('hall_ticket_no')->nullable();
             $table->boolean('ticket_send')->nullable();
             $table->integer('total_marks')->nullable();
