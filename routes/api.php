@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,7 @@ Route::get('/olympiads',[OlympiadController::class,'index']);
 Route::get('/olympiads/{id}',[OlympiadController::class,'show']);
 Route::get('/schools',[SchoolController::class,'index']);
 
+
 //Routes for logged in user 
 Route::group(['middleware' => ['auth:api']], function () {
     //admin only
@@ -55,6 +57,10 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::delete('/admin/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
 
         Route::post('/admin/category',[CategoryController::class, 'store'])->name('postCategories');
+        Route::get('/admin/olympiad/{id}/allparticipate/',[AdminController::class,'olypiad_participates']);
+        Route::get('/admin/olympiad/{id}/allparticipate/user/{user_id}/',[AdminController::class,'olypiad_participate_single']);
+        
+        
     });
     //incharge only
     Route::middleware(['checkRole:2'])->group(function () {

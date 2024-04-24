@@ -12,4 +12,7 @@ class Participate extends Model
     public function participantSubject(){
         return $this->hasMany(ParticipantSubject::class,'participant_id','id');
     }
+    public function participantUser(){
+        return $this->belongsTo(User::class,'user_id','id');
+    }
 }

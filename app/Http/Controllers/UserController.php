@@ -40,7 +40,7 @@ class UserController extends Controller
     {
         $user = JWTAuth::parseToken()->authenticate();
         $user_id=$user->id;
-        $profile=User::findOrFail($user_id);
+        $profile=User::with('userSchool')->findOrFail($user_id);
         return response()->json(['status'=>'success','data'=>$profile]);
 
     }

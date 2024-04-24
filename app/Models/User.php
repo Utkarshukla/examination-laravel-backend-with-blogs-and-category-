@@ -20,6 +20,9 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
     public function getJWTCustomClaims(){
         return [];
     }
+    public function userSchool(){
+        return $this->belongsTo(School::class,'school_id','id');
+    }
 
     /**
      * The attributes that are mass assignable.
