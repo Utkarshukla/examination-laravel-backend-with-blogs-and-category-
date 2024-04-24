@@ -85,7 +85,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('/student/olympiad/register',[ParticipateController::class,'create']);  
         Route::get('/student/olympiad/{id}/registered',[ParticipateController::class,'show']);
         Route::get('/student/olympiad/{id}/lock-payment',[ParticipateController::class,'lock_register']);
-        Route::get('/student/olympida/{id}/checkout',[ParticipateController::class,'makepayment']);
+        Route::get('/student/olympida/{id}/checkout',[PaymentController::class,'checkout']);
     });
 
     //for all user
@@ -101,6 +101,10 @@ Route::group(['middleware' => ['auth:api']], function () {
 
         Route::get('/post/{postid}/comment/',[CommentController::class,'show']);
         Route::post('/post/{postid}/comment/',[CommentController::class,'store']);
+
+       // Route::get('/checkout',[PaymentController::class,'checkout']);
+        Route::get('/sucess',[PaymentController::class,'success']);
+        Route::get('/cancel',[PaymentController::class,'cancel']);
     });
 });
 

@@ -24,6 +24,10 @@ class SchoolController extends Controller
     {
         $user=JWTAuth::parseToken()->authenticate();
         $user_id=$user->id;
+        $user_role=$user->role;
+        if($user_role != 1){
+            return response()->json(['status'=>'failure','data'=>"you don't have access to create a shcool"]);
+        }
         $validator = Validator::make($request->all(), [
             'school_name' => ['required', 'string', 'max:255'],
             'school_landmark' => ['required', 'string', 'max:255'],

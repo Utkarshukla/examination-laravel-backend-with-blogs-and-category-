@@ -11,21 +11,24 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class PaymentController extends Controller
 {
     
-    public function checkout(){ //Request $request,string $id
-        //$user = JWTAuth::parseToken()->authenticate();
-        $user_id = 1;       //$user->id;
-        $oid = 1;           //$id;
-        $participate = Participate::where('olympiad_id', $oid)
+    public function checkout(Request $request,string $id){ //
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        $oid = $id;
+        $participate = Participate::with('participantOlympiad')->where('olympiad_id', $oid)
             ->where('user_id', $user_id)
-            ->first(); // or findOrFail() if it's guaranteed to exist
+            ->firstOrFail(); 
 
         
         /*based on the user like student or incharge create payload*/
-        $price =10;                     //$participate->total_amount;
-        $participateid = 1;             // $participate->id;
-        $olympiadName= "Your Beautiful Olympiad";
+        $price =$participate->total_amount;
+        $participateid =$participate->id;
+        $olympiadName= $participate->participantOlympiad->name;
         $stripeSecretKey = config('services.stripe.secret_key');
-        
+        $frontendurl= config('services.frontend_url.frontend_url_r');
+
+
+        return response()->json(['price'=>$price,'participateid'=>$participateid,'olypiad name'=>$olympiadName,'url'=>$frontendurl,'data'=>$participate]);
         Stripe::setApiKey($stripeSecretKey);
 
         $checkout_session = \Stripe\Checkout\Session::create([
@@ -42,8 +45,8 @@ class PaymentController extends Controller
                     
             ]],
             'mode' => 'payment',
-            'success_url' => 'http://127.0.0.1:8000/success'."?session_id={CHECKOUT_SESSION_ID}",
-            'cancel_url' => 'http://127.0.0.1:8000/cancel',
+            'success_url' => $frontendurl.'/success'."?session_id={CHECKOUT_SESSION_ID}",
+            'cancel_url' => $frontendurl.'/cancel',
             'customer_email' => 'auto', 
             'billing_address_collection' => 'auto', 
             'shipping_address_collection' => [
@@ -71,6 +74,10 @@ class PaymentController extends Controller
             return response()->json(['status'=>'failure','message'=>'success method fail, session id not found']);
         }
         
+    }
+
+    public function cencel(Request $request){
+        return response()->json(['status'=>'cancel','message'=>'payment process cancelled']);
     }
 
 }

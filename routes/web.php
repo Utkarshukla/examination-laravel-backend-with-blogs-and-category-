@@ -24,8 +24,8 @@ Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogle
 
 
 
-Route::get('/checkout',[PaymentController::class,'checkout']);
-Route::get('/sucess',[PaymentController::class,'success']);
-Route::get('/cancel',[PaymentController::class,'cancel']);
+// Route::get('/checkout',[PaymentController::class,'checkout']);
+// Route::get('/sucess',[PaymentController::class,'success']);
+// Route::get('/cancel',[PaymentController::class,'cancel']);
 
 

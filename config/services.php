@@ -40,5 +40,9 @@ return [
     
     'stripe'=>[
         'secret_key'=>env('STRIPE_SECRET_KEY'),
+    ],
+
+    'frontend_url'=>[
+        'frontend_url_r'=>env('FRONTEND_URL_R'),
     ]
 ];

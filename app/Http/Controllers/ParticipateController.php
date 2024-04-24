@@ -97,18 +97,20 @@ class ParticipateController extends Controller
         $participatesData = Participate::where('olympiad_id', $oid)
             ->where('user_id', $user_id)
             ->firstOrFail();
+        $frontendurl= config('services.frontend_url.frontend_url_r');
 
         if (!$participatesData->total_ammount_locked && !$participatesData->isfullPaid) {
             $selectedSubject = ParticipantSubject::where('participant_id', $participatesData->id)->pluck('subject_id');
 
             if ($selectedSubject->isNotEmpty()) {
-                $subjects = Subject::whereIn('id', $selectedSubject)->get(); // Use get() to retrieve subject models
-                return response()->json(['message' => 'Payment amount not locked and not paid', 'subjects' => $subjects]);
+                $subjects = Subject::whereIn('id', $selectedSubject)->get(); 
+
+                return response()->json(['message' => 'Payment amount not locked and not paid','redirect_url'=>$frontendurl."/cart"]);
             }
         } elseif ($participatesData->total_ammount_locked && !$participatesData->isfullPaid) {
-            return response()->json(['message' => 'Payment amount locked, now make payment', 'data' => $participatesData]);
+            return response()->json(['message' => 'Payment amount locked, now make payment' ,'redirect_url'=>$frontendurl."/checkout"]);
         } else {
-            return response()->json(['message' => 'All done, wait for admit card, exam info, and certification', 'data' => $participatesData]);
+            return response()->json(['message' => 'All done, wait for admit card, exam info, and certification','redirect_url'=>$frontendurl."/view-olypiad-updates"]);
         }
     }
 
