@@ -57,9 +57,18 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::delete('/admin/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
 
         Route::post('/admin/category',[CategoryController::class, 'store'])->name('postCategories');
+
         Route::get('/admin/olympiad/{id}/allparticipate/',[AdminController::class,'olypiad_participates']);
         Route::get('/admin/olympiad/{id}/allparticipate/user/{user_id}/',[AdminController::class,'olypiad_participate_single']);
         
+
+        Route::get('/admin/users/',[AdminController::class,'alluser']);
+        Route::get('/admin/users/{id}',[AdminController::class,'singleUser']);
+        Route::get('/admin/incharges/',[AdminController::class,'allincharge']);
+        Route::get('/admin/incharge/{id}',[AdminController::class,'singleIncharge']);
+        Route::get('/admin/pendingIncharge/',[AdminController::class,'pendingIncharge']);
+        Route::post('/admin/incharge/{id}/approve/',[AdminController::class,'approveIncharge']);
+        Route::post('/admin/incharge/{id}/unapprove/',[AdminController::class,'unapproveIncharge']);
         
     });
     //incharge only
