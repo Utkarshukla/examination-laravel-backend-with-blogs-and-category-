@@ -14,6 +14,7 @@ class PaymentController extends Controller
     public function checkout(Request $request,string $id){ //
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
+        $user_email=$user->email;
         $oid = $id;
         $participate = Participate::with('participantOlympiad')->where('olympiad_id', $oid)
             ->where('user_id', $user_id)
@@ -45,9 +46,9 @@ class PaymentController extends Controller
                     
             ]],
             'mode' => 'payment',
-            'success_url' => $frontendurl.'/success'."?session_id={CHECKOUT_SESSION_ID}",
-            'cancel_url' => $frontendurl.'/cancel',
-            'customer_email' => 'auto', 
+            'success_url' => 'http://127.0.0.1:8000/success'."?session_id={CHECKOUT_SESSION_ID}",
+            'cancel_url' => 'http://127.0.0.1:8000/cancel',
+            //'customer_email' =>$user_email , 
             'billing_address_collection' => 'auto', 
             'shipping_address_collection' => [
                 'allowed_countries' => ['US', 'CA', 'GB', 'AU'], 
