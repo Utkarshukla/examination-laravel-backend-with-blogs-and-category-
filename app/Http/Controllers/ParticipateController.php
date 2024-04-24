@@ -96,7 +96,7 @@ class ParticipateController extends Controller
                 'olympiad_id' => $value->participantOlympiad->id,
                 'name' => $value->participantOlympiad->name,
                 'start_date'=>$value->participantOlympiad->start_date,
-                'registration_deadline'=>$value->participantOlympiad->name,
+                'registration_deadline'=>$value->participantOlympiad->registration_deadline,
                 'user_id'=>$value->user_id,
                 'total_amount'=>$value->total_amount,
                 'ticket_send'=>$value->ticket_send,
