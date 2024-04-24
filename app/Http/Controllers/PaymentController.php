@@ -28,7 +28,7 @@ class PaymentController extends Controller
         $frontendurl= config('services.frontend_url.frontend_url_r');
 
 
-        return response()->json(['price'=>$price,'participateid'=>$participateid,'olypiad name'=>$olympiadName,'url'=>$frontendurl,'data'=>$participate]);
+        //return response()->json(['price'=>$price,'participateid'=>$participateid,'olypiad name'=>$olympiadName,'url'=>$frontendurl,'data'=>$participate]);
         Stripe::setApiKey($stripeSecretKey);
 
         $checkout_session = \Stripe\Checkout\Session::create([
@@ -56,6 +56,7 @@ class PaymentController extends Controller
         $order = Payment::create([
             'amount'=>$price,
             'customer_id'=>$user_id,
+            'participate_id'=>$participateid,
             'status'=>'pending',
             'olympiad_id'=>$oid,
             'session_id'=>$checkout_session->id

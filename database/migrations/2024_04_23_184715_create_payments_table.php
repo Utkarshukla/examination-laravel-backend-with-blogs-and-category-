@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('customer_id');
             $table->unsignedBigInteger('olympiad_id');
             $table->string('payment_method_id')->nullable()->default(0);
+            $table->unsignedBigInteger('participate_id');
             $table->unsignedBigInteger('amount');
             $table->string('status')->default('pending');
             $table->string('session_id');
