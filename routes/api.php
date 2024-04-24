@@ -106,7 +106,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('/post/{postid}/comment/',[CommentController::class,'store']);
         
 
-       // Route::get('/checkout',[PaymentController::class,'checkout']);
+       
         Route::get('/sucess',[PaymentController::class,'success']);
         Route::get('/cancel',[PaymentController::class,'cancel']);
     });
@@ -123,7 +123,10 @@ Route::get('/auth/google/redirect', [GoogleLoginController::class, 'redirectToGo
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback']);
 
 
+Route::get('/checkout',[PaymentController::class,'checkout']);
 
+Route::get('/sucess',[PaymentController::class,'success']);
+Route::get('/cancel',[PaymentController::class,'cancel']);
 // Incharge Creation 
 // http://127.0.0.1:8000/register
 // {

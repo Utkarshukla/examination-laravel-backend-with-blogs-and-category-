@@ -11,25 +11,24 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class PaymentController extends Controller
 {
     
-    public function checkout(Request $request,string $id){ //
-        $user = JWTAuth::parseToken()->authenticate();
-        $user_id = $user->id;
-        $user_email=$user->email;
-        $oid = $id;
-        $participate = Participate::with('participantOlympiad')->where('olympiad_id', $oid)
-            ->where('user_id', $user_id)
-            ->firstOrFail(); 
+    public function checkout(){ //Request $request,string $id
+       // $user = JWTAuth::parseToken()->authenticate();
+        $user_id =2;// $user->id;
+       // $user_email=$user->email;
+        $oid =1; //$id;
+        // $participate = Participate::with('participantOlympiad')->where('olympiad_id', $oid)
+        //     ->where('user_id', $user_id)
+        //     ->firstOrFail(); 
 
         
         /*based on the user like student or incharge create payload*/
-        $price =$participate->total_amount;
-        $participateid =$participate->id;
-        $olympiadName= $participate->participantOlympiad->name;
+        $price = 10;//$participate->total_amount;
+        $participateid = 1;//$participate->id;
+        $olympiadName= 'abcd';//$participate->participantOlympiad->name;
         $stripeSecretKey = config('services.stripe.secret_key');
         $frontendurl= config('services.frontend_url.frontend_url_r');
 
-
-        //return response()->json(['price'=>$price,'participateid'=>$participateid,'olypiad name'=>$olympiadName,'url'=>$frontendurl,'data'=>$participate]);
+        //return response()->json(['price'=>$price,'olypiad name'=>$olympiadName,'data'=>$frontendurl]);
         Stripe::setApiKey($stripeSecretKey);
 
         $checkout_session = \Stripe\Checkout\Session::create([
@@ -46,8 +45,8 @@ class PaymentController extends Controller
                     
             ]],
             'mode' => 'payment',
-            'success_url' => 'http://127.0.0.1:8000/success'."?session_id={CHECKOUT_SESSION_ID}",
-            'cancel_url' => 'http://127.0.0.1:8000/cancel',
+            'success_url' =>$frontendurl."/contact/?session_id={CHECKOUT_SESSION_ID}",
+            'cancel_url' => $frontendurl."/cancel",
             //'customer_email' =>$user_email , 
             'billing_address_collection' => 'auto', 
             'shipping_address_collection' => [
@@ -63,10 +62,11 @@ class PaymentController extends Controller
             'session_id'=>$checkout_session->id
         ]);
 
-        return redirect($checkout_session->url);
+        return response()->json(['url' => $checkout_session->url]);
     }
 
     public function success(Request $request){
+        
         $session = $request->get('session_id');
         $stripeSecretKey = config('services.stripe.secret_key');
         
@@ -75,11 +75,34 @@ class PaymentController extends Controller
         if(!$sessionn){
             return response()->json(['status'=>'failure','message'=>'success method fail, session id not found']);
         }
-        
+        return response()->json(['data'=>'you are in success, update database']);
     }
 
     public function cencel(Request $request){
         return response()->json(['status'=>'cancel','message'=>'payment process cancelled']);
     }
-
+    public function webhook(Request $request){
+        $payload = $request->getContent();
+        $sig_header = $request->server('HTTP_STRIPE_SIGNATURE');
+        $endpoint_secret = config('services.stripe.webhook_secret');
+        $event = null;
+        try {
+            $event = \Stripe\Webhook::constructEvent(
+                $payload, $sig_header, $endpoint_secret
+            );
+        } catch (\UnexpectedValueException $e) {
+            return response()->json(['error' => 'Invalid payload'], 400);
+        } catch (\Stripe\Exception\SignatureVerificationException $e) {
+            return response()->json(['error' => 'Invalid signature'], 400);
+        }
+        switch ($event->type) {
+            case 'payment_intent.succeeded':
+                break;
+            case 'payment_intent.payment_failed':
+                break;
+            default:
+                break;
+        }
+        return response()->json(['success' => true]);
+    }
 }
