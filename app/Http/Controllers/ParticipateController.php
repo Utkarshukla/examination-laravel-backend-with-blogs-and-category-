@@ -114,26 +114,29 @@ class ParticipateController extends Controller
             return response()->json(['data'=>$data]);
         } else if($user_role==2){
 
-            $participatesData = Participate::with('participantOlympiad')->where('created_by', $user_id)->get();
+            $participatesData = Participate::with('participantOlympiad')->select('olympiad_id')->where('created_by', $user_id)->groupBy('olympiad_id')->get()->pluck('participantOlympiad');
             $yourOlympiadsData = [];
-
-            foreach ($participatesData as $value) {
-                $olympiadDetails = [
-                    'participate_id'=>$value->id,
-                    'olympiad_id' => $value->participantOlympiad->id,
-                    'name' => $value->participantOlympiad->name,
-                    'start_date'=>$value->participantOlympiad->start_date,
-                    'registration_deadline'=>$value->participantOlympiad->registration_deadline,
-                    'user_id'=>$value->user_id,
-                    'total_amount'=>$value->total_amount,
-                    'ticket_send'=>$value->ticket_send,
-                    'isfullPaid'=>$value->isfullPaid,
-                    'hall_ticket_no'=>$value->hall_ticket_no,
-                    'aadhar_number'=>$value->aadhar_number,
-                    'certificate_url'=>$value->certificate_url,
-                ];
-                $yourOlympiadsData[] = $olympiadDetails;
-            }
+            $participatesData = Participate::where('created_by', 3)
+                                ->where('olympiad_id', 7)
+                                ->where('isfullPaid', '=', null) // Filter out records where isfullPaid is not 1
+                                ->get();
+            // foreach ($participatesData as $value) {
+            //     $olympiadDetails = [
+            //         'participate_id'=>$value->id,
+            //         'olympiad_id' => $value->participantOlympiad->id,
+            //         'name' => $value->participantOlympiad->name,
+            //         'start_date'=>$value->participantOlympiad->start_date,
+            //         'registration_deadline'=>$value->participantOlympiad->registration_deadline,
+            //         'user_id'=>$value->user_id,
+            //         'total_amount'=>$value->total_amount,
+            //         'ticket_send'=>$value->ticket_send,
+            //         'isfullPaid'=>$value->isfullPaid,
+            //         'hall_ticket_no'=>$value->hall_ticket_no,
+            //         'aadhar_number'=>$value->aadhar_number,
+            //         'certificate_url'=>$value->certificate_url,
+            //     ];
+            //     $yourOlympiadsData[] = $olympiadDetails;
+            // }
             
             $data= $participatesData;
             return response()->json(['data'=>$data]);

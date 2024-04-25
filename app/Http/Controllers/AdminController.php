@@ -26,7 +26,7 @@ class AdminController extends Controller
         return response()->json(['status'=>'success','data'=>$data],200);
     }
     public function singleUser(string $id){
-        $data = User::where('id', '=', $id)->first();
+        $data = User::with('userSchool')->where('id', '=', $id)->first();
         return response()->json(['status'=>'success','data'=>$data],200);
     }
     public function allincharge(){
@@ -34,14 +34,14 @@ class AdminController extends Controller
         return response()->json(['status'=>'success','data'=>$data],200);
     }
     public function singleIncharge(string $id){
-        $data = User::where('role', '=',2)->where('id','=',$id)->first();
+        $data = User::with('userSchool')->where('role', '=',2)->where('id','=',$id)->first();
         if($data){
             return response()->json(['status'=>'success','data'=>$data],200);
         }
         return response()->json(['status'=>'success','data'=>'not a incharge'],200);
     }
     public function pendingIncharge(){
-        $data = User::where('role', '=',6)->get();
+        $data = User::with('userSchool')->where('role', '=',6)->get();
         return response()->json(['status'=>'success','data'=>$data],200);
     }
     public function approveIncharge(string $id){

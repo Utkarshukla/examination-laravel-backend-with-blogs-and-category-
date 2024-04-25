@@ -87,7 +87,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/student/olympiad/{id}/registered',[ParticipateController::class,'show']);
         Route::get('/student/olympiad/{id}/lock-payment',[ParticipateController::class,'lock_register']);
 
-        Route::get('/student/olympida/{id}/checkout',[PaymentController::class,'checkout']);
+        Route::get('/student/olympiad/{id}/checkout',[PaymentController::class,'checkout']);
 
         Route::get('/student/olympiad/your-olympiad',[ParticipateController::class,'showAll']);
     });
@@ -124,9 +124,8 @@ Route::get('/auth/google/redirect', [GoogleLoginController::class, 'redirectToGo
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback']);
 
 
-Route::get('/checkout',[PaymentController::class,'checkout']);
-
-Route::get('/sucess',[PaymentController::class,'success']);
+// Route::get('/checkout',[PaymentController::class,'checkout']);
+Route::get('/success/{session_id}', [PaymentController::class, 'success']);
 Route::get('/cancel',[PaymentController::class,'cancel']);
 // Incharge Creation 
 // http://127.0.0.1:8000/register
