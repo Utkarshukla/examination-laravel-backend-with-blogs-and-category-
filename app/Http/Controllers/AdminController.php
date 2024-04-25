@@ -34,7 +34,7 @@ class AdminController extends Controller
         return response()->json(['status'=>'success','data'=>$data],200);
     }
     public function singleIncharge(string $id){
-        $data = User::with('userSchool')->where('role', '=',2)->where('id','=',$id)->first();
+        $data = User::with('userSchool')->where('id','=',$id)->first();
         if($data){
             return response()->json(['status'=>'success','data'=>$data],200);
         }

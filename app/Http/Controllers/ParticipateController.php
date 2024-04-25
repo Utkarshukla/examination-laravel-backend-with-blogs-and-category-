@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Olympiad;
 use App\Models\ParticipantSubject;
 use App\Models\Participate;
 use App\Models\Subject;
@@ -89,54 +90,14 @@ class ParticipateController extends Controller
         $user_id = $user->id;
         $user_role=$user->role;
         if($user_role==5){
-            $participatesData = Participate::with('participantOlympiad')->where('user_id', $user_id)->get();
-            $yourOlympiadsData = [];
+           
 
-            foreach ($participatesData as $value) {
-                $olympiadDetails = [
-                    'participate_id'=>$value->id,
-                    'olympiad_id' => $value->participantOlympiad->id,
-                    'name' => $value->participantOlympiad->name,
-                    'start_date'=>$value->participantOlympiad->start_date,
-                    'registration_deadline'=>$value->participantOlympiad->registration_deadline,
-                    'user_id'=>$value->user_id,
-                    'total_amount'=>$value->total_amount,
-                    'ticket_send'=>$value->ticket_send,
-                    'isfullPaid'=>$value->isfullPaid,
-                    'hall_ticket_no'=>$value->hall_ticket_no,
-                    'aadhar_number'=>$value->aadhar_number,
-                    'certificate_url'=>$value->certificate_url,
-                ];
-                $yourOlympiadsData[] = $olympiadDetails;
-            }
-            
-            $data= $yourOlympiadsData;
+            $participatesData = Participate::with('participantOlympiad')->select('olympiad_id')->where('user_id', $user_id)->groupBy('olympiad_id')->get()->pluck('participantOlympiad');
+            $data= $participatesData;
             return response()->json(['data'=>$data]);
         } else if($user_role==2){
 
             $participatesData = Participate::with('participantOlympiad')->select('olympiad_id')->where('created_by', $user_id)->groupBy('olympiad_id')->get()->pluck('participantOlympiad');
-            $yourOlympiadsData = [];
-            $participatesData = Participate::where('created_by', 3)
-                                ->where('olympiad_id', 7)
-                                ->where('isfullPaid', '=', null) // Filter out records where isfullPaid is not 1
-                                ->get();
-            // foreach ($participatesData as $value) {
-            //     $olympiadDetails = [
-            //         'participate_id'=>$value->id,
-            //         'olympiad_id' => $value->participantOlympiad->id,
-            //         'name' => $value->participantOlympiad->name,
-            //         'start_date'=>$value->participantOlympiad->start_date,
-            //         'registration_deadline'=>$value->participantOlympiad->registration_deadline,
-            //         'user_id'=>$value->user_id,
-            //         'total_amount'=>$value->total_amount,
-            //         'ticket_send'=>$value->ticket_send,
-            //         'isfullPaid'=>$value->isfullPaid,
-            //         'hall_ticket_no'=>$value->hall_ticket_no,
-            //         'aadhar_number'=>$value->aadhar_number,
-            //         'certificate_url'=>$value->certificate_url,
-            //     ];
-            //     $yourOlympiadsData[] = $olympiadDetails;
-            // }
             
             $data= $participatesData;
             return response()->json(['data'=>$data]);
@@ -152,25 +113,45 @@ class ParticipateController extends Controller
     {
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
+        $user_role= $user->role;
         $oid = $id;
+        $data = [];
+        if ($user_role == 5) {
+           
+            $participatesData = Participate::with('participantUser')->where('user_id', $user_id)
+                ->where('olympiad_id', $oid) 
+                ->get();
+            $olympiad = Olympiad::find($oid); // Find Olympiad by ID
+            $data['participatesData'] = $participatesData;
+            $data['olympiad'] = $olympiad;
+            return response()->json(['data' => $data]);
+        } else if ($user_role == 2) {
+            $participatesData = Participate::with('participantUser')->where('created_by', $user_id)
+                ->where('olympiad_id', $oid) 
+                ->get();
+            $totalAmount = $participatesData->where('isfullPaid', '!=', 1)->sum('total_amount');
+            $olympiad = Olympiad::find($oid); 
+            $data['participatesData'] = $participatesData;
+            $data['olympiad'] = $olympiad;
+            $data['totalAmount'] = $totalAmount;
+            return response()->json(['data' => $data]);
+        }
+    }
 
-        $participatesData = Participate::where('olympiad_id', $oid)
-            ->where('user_id', $user_id)
-            ->firstOrFail();
-        $frontendurl= config('services.frontend_url.frontend_url_r');
+    public function deleteOne(Request $request, string $oid , string $participate_id){
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+            $created_by = $user->id;
+            $participation = Participate::where('created_by', $created_by)
+            ->where('id', $participate_id)
+            ->where('olympiad_id', $oid)->where('isfullPaid','!=',1)
+            ->firstOrFail(); 
+            $participation->participantSubject()->delete();
+            $participation->delete();
 
-        if (!$participatesData->total_ammount_locked && !$participatesData->isfullPaid) {
-            $selectedSubject = ParticipantSubject::where('participant_id', $participatesData->id)->pluck('subject_id');
-
-            if ($selectedSubject->isNotEmpty()) {
-                $subjects = Subject::whereIn('id', $selectedSubject)->get(); 
-
-                return response()->json(['message' => 'Payment amount not locked and not paid','redirect_url'=>$frontendurl."/cart"]);
-            }
-        } elseif ($participatesData->total_ammount_locked && !$participatesData->isfullPaid) {
-            return response()->json(['message' => 'Payment amount locked, now make payment' ,'redirect_url'=>$frontendurl."/checkout"]);
-        } else {
-            return response()->json(['message' => 'All done, wait for admit card, exam info, and certification','redirect_url'=>$frontendurl."/view-olypiad-updates"]);
+            return response()->json(['status'=>'success','message' => 'Participation record deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to delete participation record', 'message' => $e->getMessage()], 500);
         }
     }
 
