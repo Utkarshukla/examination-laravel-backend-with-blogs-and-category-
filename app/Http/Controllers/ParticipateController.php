@@ -87,29 +87,59 @@ class ParticipateController extends Controller
     public function showAll(Request $request){
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
-        $participatesData = Participate::with('participantOlympiad')->where('user_id', $user_id)->get();
-        $yourOlympiadsData = [];
+        $user_role=$user->role;
+        if($user_role==5){
+            $participatesData = Participate::with('participantOlympiad')->where('user_id', $user_id)->get();
+            $yourOlympiadsData = [];
 
-        foreach ($participatesData as $value) {
-            $olympiadDetails = [
-                'participate_id'=>$value->id,
-                'olympiad_id' => $value->participantOlympiad->id,
-                'name' => $value->participantOlympiad->name,
-                'start_date'=>$value->participantOlympiad->start_date,
-                'registration_deadline'=>$value->participantOlympiad->registration_deadline,
-                'user_id'=>$value->user_id,
-                'total_amount'=>$value->total_amount,
-                'ticket_send'=>$value->ticket_send,
-                'isfullPaid'=>$value->isfullPaid,
-                'hall_ticket_no'=>$value->hall_ticket_no,
-                'aadhar_number'=>$value->aadhar_number,
-                'certificate_url'=>$value->certificate_url,
-            ];
-            $yourOlympiadsData[] = $olympiadDetails;
+            foreach ($participatesData as $value) {
+                $olympiadDetails = [
+                    'participate_id'=>$value->id,
+                    'olympiad_id' => $value->participantOlympiad->id,
+                    'name' => $value->participantOlympiad->name,
+                    'start_date'=>$value->participantOlympiad->start_date,
+                    'registration_deadline'=>$value->participantOlympiad->registration_deadline,
+                    'user_id'=>$value->user_id,
+                    'total_amount'=>$value->total_amount,
+                    'ticket_send'=>$value->ticket_send,
+                    'isfullPaid'=>$value->isfullPaid,
+                    'hall_ticket_no'=>$value->hall_ticket_no,
+                    'aadhar_number'=>$value->aadhar_number,
+                    'certificate_url'=>$value->certificate_url,
+                ];
+                $yourOlympiadsData[] = $olympiadDetails;
+            }
+            
+            $data= $yourOlympiadsData;
+            return response()->json(['data'=>$data]);
+        } else if($user_role==2){
+
+            $participatesData = Participate::with('participantOlympiad')->where('created_by', $user_id)->get();
+            $yourOlympiadsData = [];
+
+            foreach ($participatesData as $value) {
+                $olympiadDetails = [
+                    'participate_id'=>$value->id,
+                    'olympiad_id' => $value->participantOlympiad->id,
+                    'name' => $value->participantOlympiad->name,
+                    'start_date'=>$value->participantOlympiad->start_date,
+                    'registration_deadline'=>$value->participantOlympiad->registration_deadline,
+                    'user_id'=>$value->user_id,
+                    'total_amount'=>$value->total_amount,
+                    'ticket_send'=>$value->ticket_send,
+                    'isfullPaid'=>$value->isfullPaid,
+                    'hall_ticket_no'=>$value->hall_ticket_no,
+                    'aadhar_number'=>$value->aadhar_number,
+                    'certificate_url'=>$value->certificate_url,
+                ];
+                $yourOlympiadsData[] = $olympiadDetails;
+            }
+            
+            $data= $participatesData;
+            return response()->json(['data'=>$data]);
+            
         }
         
-        $data= $yourOlympiadsData;
-        return response()->json(['data'=>$data]);
     }
 
     /**
