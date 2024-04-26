@@ -15,4 +15,8 @@ class Olympiad extends Model
     {
         return $this->hasMany(Subject::class);
     }
+    public function ticketCount()
+    {
+        return $this->hasOne(TicketCount::class);
+    }
 }

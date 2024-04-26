@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('count')->nullable();
             $table->unsignedBigInteger('olympiad_id')->nullable();
+            $table->foreign('olympiad_id')->references('id')->on('olympiads');
             $table->timestamps();
         });
     }
