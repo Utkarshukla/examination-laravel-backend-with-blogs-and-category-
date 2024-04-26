@@ -2,17 +2,56 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\HallTicket;
 use App\Models\Olympiad;
 use App\Models\Participate;
+use App\Models\TicketCount;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class AdminController extends Controller
 {
     public function profile(){
 
     }
-
+    public function generateHallTicket($olympiadId) {
+        $olympiadStartDate = Olympiad::where('id', $olympiadId)->value('start_date');
+        $formattedDate = Carbon::parse($olympiadStartDate)->format('Ymd');
+        
+        // Retrieve and update the count value
+        $ticketCount = TicketCount::where('olympiad_id', $olympiadId)->firstOrFail();
+        $newCount = $ticketCount->count + 1;
+        $ticketCount->count = $newCount;
+        $ticketCount->save();
+        
+        $hallTicketNumber = $formattedDate . str_pad($newCount, 3, '0', STR_PAD_LEFT);
+        
+        return $hallTicketNumber;
+    }
+    
+    public function hallticket(Request $request, $id) {
+        $olympiadId = $id;
+        $tickets = [];
+        $data = Participate::with('participantUser')->where('olympiad_id', $olympiadId)->where('hall_ticket_no', null)->get();
+        foreach ($data as $d) {
+            $hallTicket = $this->generateHallTicket($olympiadId);
+            $d->update([
+                'hall_ticket_no'=>$hallTicket,
+            ]);
+            $participantEmail = $d->participantUser->email; 
+            Mail::to($participantEmail)->send(new HallTicket($d));
+            $tickets[]= "Participant Email: $participantEmail, Hall Ticket: $hallTicket<br>";
+        }
+        return response()->json(['status'=>'success','message'=>$tickets]);
+    }
+    
+    public function singlehallticket(Request $request, $id){
+        $oid=$id;
+        $startdate= Olympiad::select(['start_date'])->find($oid);
+        $count= TicketCount::find(['count','current']);
+    }
     public function olypiad_participates( string $id){
         $data= Participate::with('participantUser')->where('olympiad_id',$id)->get();
         return response()->json(['status'=>'success','data'=>$data],200);

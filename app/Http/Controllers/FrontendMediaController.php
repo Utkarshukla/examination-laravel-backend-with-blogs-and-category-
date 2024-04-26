@@ -24,7 +24,7 @@ class FrontendMediaController extends Controller
         return response()->json(['status'=>'success','data'=>'media added Successfully']);
     }
     public function show(){
-        $media =FrontendMedia::paginate(10);//DB::table('frontend_media')->paginate(10);
+        $media =FrontendMedia::paginate(10);
         
         return response()->json(['status'=>'success','data'=>$media]);
     }

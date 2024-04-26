@@ -45,6 +45,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::middleware(['checkRole:1'])->group(function () {
 
         Route::post('/admin/school/create',[SchoolController::class,'create']);
+        
+        Route::get('/admin/school/{id}',[SchoolController::class,'show']);
         Route::put('/admin/school/update/{id}', [SchoolController::class,'update']);
         Route::delete('/admin/school/delete/{id}',[SchoolController::class,'destroy']);
 
@@ -60,6 +62,9 @@ Route::group(['middleware' => ['auth:api']], function () {
 
         Route::get('/admin/olympiad/{id}/allparticipate/',[AdminController::class,'olypiad_participates']);
         Route::get('/admin/olympiad/{id}/allparticipate/user/{user_id}/',[AdminController::class,'olypiad_participate_single']);
+
+        Route::post('/admin/olympiad/{id}/bulkhallticket/',[AdminController::class, 'hallticket']);
+        Route::post('/admin/olympiad/{id}/singleticket/',[AdminController::class,'singlehallticket']);
         
 
         Route::get('/admin/users/',[AdminController::class,'alluser']);

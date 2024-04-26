@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Olympiad;
 use App\Models\Subject;
+use App\Models\TicketCount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -63,7 +64,10 @@ class OlympiadController extends Controller
                 'subject_marks' => $subjectData['subject_marks']
             ]);
         }
-    
+        $hallintial= TicketCount::create([
+            'count'=>0,
+            'olympiad_id'=>$olympiad->id,
+        ]);
         return response()->json(['status' => 'success','data'=>'data created successfully'], 201);
     }
 
