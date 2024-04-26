@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendHallTicketEmail;
 use App\Mail\HallTicket;
 use App\Models\Olympiad;
 use App\Models\Participate;
@@ -34,17 +35,21 @@ class AdminController extends Controller
     public function hallticket(Request $request, $id) {
         $olympiadId = $id;
         $tickets = [];
-        $data = Participate::with('participantUser')->where('olympiad_id', $olympiadId)->where('hall_ticket_no', null)->get();
-        foreach ($data as $d) {
-            $hallTicket = $this->generateHallTicket($olympiadId);
-            $d->update([
-                'hall_ticket_no'=>$hallTicket,
-            ]);
-            $participantEmail = $d->participantUser->email; 
-            Mail::to($participantEmail)->send(new HallTicket($d));
-            $tickets[]= "Participant Email: $participantEmail, Hall Ticket: $hallTicket<br>";
-        }
-        return response()->json(['status'=>'success','message'=>$tickets]);
+        $delay = 10;
+        Participate::with('participantUser')
+            ->where('olympiad_id', $olympiadId)
+            ->where('hall_ticket_no', null)
+            ->chunk(20, function ($data) {  //->chunk(20, function ($data) use ($delay) {
+                foreach ($data as $d) {
+                    $hallTicket = $this->generateHallTicket($d->olympiad_id);
+                    $d->update(['hall_ticket_no' => $hallTicket]);
+                    dispatch(new SendHallTicketEmail($d));
+                    $participantEmail = $d->participantUser->email; 
+                    $tickets[] = "Participant Email: $participantEmail, Hall Ticket: $hallTicket<br>";
+                }
+            });
+
+    return response()->json(['status' => 'success', 'message' => $tickets]);
     }
     
     public function singlehallticket(Request $request, $id){

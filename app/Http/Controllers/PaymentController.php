@@ -154,6 +154,10 @@ class PaymentController extends Controller
                 $participate->isfullPaid = 1;
                 $participate->total_ammount_locked = 1;
                 $participate->save();
+
+                $order->update([
+                    'status'=>'success'
+                ]);
             }
 
             return response()->json(['status'=>'you are in user_role 2 , api incomplete']);
