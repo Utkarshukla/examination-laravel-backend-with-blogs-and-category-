@@ -142,17 +142,20 @@ class ParticipateController extends Controller
         try {
             $user = JWTAuth::parseToken()->authenticate();
             $created_by = $user->id;
+            
             $participation = Participate::where('created_by', $created_by)
             ->where('id', $participate_id)
-            ->where('olympiad_id', $oid)->where('isfullPaid','!=',true)
+            ->where('olympiad_id', $oid)
             ->firstOrFail(); 
-
-            $participation->participantSubject()->delete();
-            $participation->delete();
-
-            return response()->json(['status'=>'success','message' => 'Participation record deleted successfully']);
+            if($participation->isfullPaid != 1){
+                $participation->participantSubject()->delete();
+                $participation->delete();
+                return response()->json(['status'=>'failure','message'=>"Participation record deleted successfully"]);
+            } else {
+                return response()->json(['status'=>'failure','message'=>"Can't delete , Student already Paid "]);
+            }
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to delete participation record', 'message' => $e->getMessage()], 500);
+            return response()->json(['error' => 'Record Not Found'], 404);
         }
     }
 
