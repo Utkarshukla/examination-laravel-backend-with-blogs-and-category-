@@ -80,7 +80,9 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('/incharge/olympiad/register/',[BulkParticipateController::class,'create']);    
         Route::get('/incharge/olympiad/{id}/registered',[ParticipateController::class,'show']);
         Route::get('/incharge/olympiad/your-olympiad',[ParticipateController::class,'showAll']);
-        Route::get('/incharge/olympiad/{id}/registered/{participate_id}',[ParticipateController::class,'deleteOne']);
+        Route::delete('/incharge/olympiad/{id}/registered/{participate_id}',[ParticipateController::class,'deleteOne']);
+
+        Route::get('/incharge/olympiad/{id}/checkout',[PaymentController::class,'checkout']);
 
     });
     //student only
@@ -110,7 +112,8 @@ Route::group(['middleware' => ['auth:api']], function () {
         
 
        
-        Route::get('/sucess',[PaymentController::class,'success']);
+        //Payment success/cancel route
+        Route::get('/success/{session_id}', [PaymentController::class, 'success']);
         Route::get('/cancel',[PaymentController::class,'cancel']);
     });
 });
@@ -127,8 +130,7 @@ Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogle
 
 
 // Route::get('/checkout',[PaymentController::class,'checkout']);
-Route::get('/success/{session_id}', [PaymentController::class, 'success']);
-Route::get('/cancel',[PaymentController::class,'cancel']);
+// Route::get('/cancel',[PaymentController::class,'cancel']);
 // Incharge Creation 
 // http://127.0.0.1:8000/register
 // {

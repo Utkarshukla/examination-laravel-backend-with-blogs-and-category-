@@ -144,8 +144,9 @@ class ParticipateController extends Controller
             $created_by = $user->id;
             $participation = Participate::where('created_by', $created_by)
             ->where('id', $participate_id)
-            ->where('olympiad_id', $oid)->where('isfullPaid','!=',1)
+            ->where('olympiad_id', $oid)->where('isfullPaid','!=',true)
             ->firstOrFail(); 
+
             $participation->participantSubject()->delete();
             $participation->delete();
 
