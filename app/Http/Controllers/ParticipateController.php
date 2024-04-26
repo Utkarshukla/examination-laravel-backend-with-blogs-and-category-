@@ -36,8 +36,48 @@ class ParticipateController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 422);
         }
-        $subjcet_Data = [];
-
+        //already registered validation 
+        $requestData0 = $request->all();
+        $oid = $requestData0['olympiad_id'];
+        
+        $check = Participate::with('participantSubject')->where('olympiad_id',$oid)->where('user_id',$user_id)->get();
+        if (!$check->isEmpty()) {
+            $subjectPrice = [];
+            $subjectMarks = [];
+        
+            // Iterate over existing participant subjects
+            foreach ($check as $participant) {
+                $participateId = $participant->id;
+                foreach ($participant->participantSubject as $subject) {
+                    $subjectdetail = Subject::find($subject->subject_id);
+                    $subjectPrice[] = $subjectdetail->subject_fee;
+                    $subjectMarks[] = $subjectdetail->subject_marks;
+                }
+            }
+            $currentTotalAmount = array_sum($subjectPrice);
+            $currentTotalMarks = array_sum($subjectMarks);
+            $subjectIdsFrontend = $requestData0['subjects'];
+            $subjectIdsBackend = $check->pluck('participantSubject.*.subject_id')->flatten()->toArray(); 
+            $subjectsToAdd = array_diff($subjectIdsFrontend, $subjectIdsBackend);
+            $newSubjectPrice = Subject::whereIn('id', $subjectsToAdd)->sum('subject_fee');
+            $newSubjectMarks = Subject::whereIn('id', $subjectsToAdd)->sum('subject_marks');
+            $newTotalAmount = $currentTotalAmount + $newSubjectPrice;
+            $newTotalMarks = $currentTotalMarks + $newSubjectMarks;
+            $updateRecord = Participate::findOrFail($participateId);
+            $updateRecord->update([
+                'total_amount' => $newTotalAmount,
+                'total_marks' => $newTotalMarks,
+            ]);
+            foreach ($subjectsToAdd as $subjectId) {
+                ParticipantSubject::updateOrCreate([
+                    'participant_id' => $participateId,
+                    'student_id' => $user_id,
+                    'subject_id' => $subjectId
+                ]);
+            }
+        
+            return response()->json(['status' => 'success', 'message' => 'New subjects added successfully']);
+        }
         foreach ($request->input('subjects') as $subject) {
             $subject = Subject::find($subject);
             if ($subject) {
@@ -181,26 +221,26 @@ class ParticipateController extends Controller
         }
     }
 
-    public function makepayment(Request $request, string $id)
-    {
-        $user = JWTAuth::parseToken()->authenticate();
-        $user_id = $user->id;
-        $oid = $id;
-        $participate = Participate::where('olympiad_id', $oid)
-            ->where('user_id', $user_id)
-            ->first(); // or findOrFail() if it's guaranteed to exist
+    // public function makepayment(Request $request, string $id)
+    // {
+    //     $user = JWTAuth::parseToken()->authenticate();
+    //     $user_id = $user->id;
+    //     $oid = $id;
+    //     $participate = Participate::where('olympiad_id', $oid)
+    //         ->where('user_id', $user_id)
+    //         ->first(); // or findOrFail() if it's guaranteed to exist
 
-        $price = $participate->total_amount;
-        $participateid = $participate->id;
-        //payment gateway api
-        //if(payment=="success"){
-        $participate->update([
-            'isfullPaid' => true,
-        ]);
-        //update payemt tabler
-        //}
-        return response()->json(['status' => 'success', 'message' => 'Payment done']);
-    }
+    //     $price = $participate->total_amount;
+    //     $participateid = $participate->id;
+    //     //payment gateway api
+    //     //if(payment=="success"){
+    //     $participate->update([
+    //         'isfullPaid' => true,
+    //     ]);
+    //     //update payemt tabler
+    //     //}
+    //     return response()->json(['status' => 'success', 'message' => 'Payment done']);
+    // }
 
     /**
      * Show the form for editing the specified resource.
