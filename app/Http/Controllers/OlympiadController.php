@@ -103,6 +103,9 @@ class OlympiadController extends Controller
     public function update(Request $request, string $id)
     {
         $olympiad = Olympiad::find($id);
+        $user = JWTAuth::parseToken()->authenticate();
+         $user_id =$user->id;
+         $user_role=$user->role;
 
         if (!$olympiad) {
             return response()->json(['error' => 'Olympiad not found'], 404);
@@ -115,7 +118,7 @@ class OlympiadController extends Controller
             'end_date' => ['date'],
             'status' => ['boolean'],
             'registration_deadline' => ['date'], // Fixed typo here
-            'author_id' => ['exists:users,id'],
+            //'author_id' => ['exists:users,id'],
         ]);
 
         if ($validator->fails()) {
