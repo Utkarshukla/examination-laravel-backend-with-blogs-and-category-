@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendCertificateEmail;
 use App\Jobs\SendHallTicketEmail;
 use App\Mail\HallTicket;
 use App\Models\Olympiad;
@@ -101,6 +102,7 @@ class AdminController extends Controller
                         $certificateUrl = $this->generateCertificate($d);
                         $d->update(['certificate_url' => $certificateUrl]);
                         $tomail = $d->participantUser->email;
+                        dispatch(new SendCertificateEmail($d));
 
                     }
                 }
