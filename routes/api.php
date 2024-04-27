@@ -50,7 +50,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::put('/admin/school/update/{id}', [SchoolController::class,'update']);
         Route::delete('/admin/school/delete/{id}',[SchoolController::class,'destroy']);
 
-        Route::post('/admin/olympiad/create',[OlympiadController::class,'create' ]);
+        Route::post('/admin/olympiad/create',[OlympiadController::class,'create']);
         Route::put('/admin/olympiad/update/{id}',[OlympiadController::class,'update' ]);
         Route::delete('/admin/olympiad/destroy/{id}',[OlympiadController::class,'destroy' ]);
 

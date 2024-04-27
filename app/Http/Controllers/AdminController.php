@@ -24,13 +24,19 @@ class AdminController extends Controller
 
     public function generateCertificate($participant)
 {
-
+    $certificateID = $participant->hall_ticket_no;
     $percentage = ($participant->obtain_marks / $participant->total_marks) * 100;
+    $fatherName= $participant->participantUser->father;
+    $date= $participant->participantOlympiad->start_date;
+    $class=$participant->class;
+    $olympiadname= $participant->participantOlympiad->name;
     $backgroundImageUrl = public_path('storage/template.jpeg');
     $certificateContent = "<div style='position: relative;'>";
     $certificateContent .= "<img src='data:image/jpeg;base64,%BACKGROUND_IMAGE_ENCODED%' style='position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;' />";
-    $certificateContent .= "<h1 style='text-align: center;'>Certificate of Participation</h1>";
-    $certificateContent .= "<p style='text-align: center;'>This certifies that {$participant->participantUser->name} participated in the Olympiad. and achived {$percentage}%</p>";
+    $certificateContent .= "<h3 style='text-align: center;color:#4e5776;position: absolute;top:500; margin-left:20px;'>Certificate ID: {$certificateID}</h3>";
+    $certificateContent .= "<h3 style='text-align: center;color:#4e5776;position: absolute;top:530; margin-left:20px;'>Marks Obtained: {$participant->obtain_marks} in total {$participant->total_marks} </h3>";
+    $certificateContent .= "<h1 style='text-align: center;color:#4e5776;position: absolute;top:46%; left: 50%; transform: translate(-50%, -50%);'><center>{$participant->participantUser->name}</center></h1>";
+    $certificateContent .= "<p style='text-align: center;color:#4e5776;position: absolute;top:380; padding-left:20px; padding-right:20px'>This is to certify that <b> {$participant->participantUser->name}</b> , son/daughter of <b> $fatherName</b> , has successfully participated in the <b>{$olympiadname}</b> held in <b> $date</b> . He/She is appeared in <b>class $class</b>. Him/Her has demonstrated exceptional talent and dedication, achieving a remarkable <b style='color:#4e5776;'> $percentage% </b> in the <b> {$olympiadname}</b> . His/Her commitment to academic excellence and passion for learning are truly commendable. We congratulate for outstanding performance and wish Him/Her continued success in his/her academic journey.</p>";
     $certificateContent .= "</div>";
     $backgroundImageData = file_get_contents($backgroundImageUrl);
     $backgroundImageEncoded = base64_encode($backgroundImageData);
@@ -38,7 +44,7 @@ class AdminController extends Controller
     $dompdf = new Dompdf();
     $dompdf->loadHtml($certificateContent);
     $dompdf->render();
-   $filename = 'certificate_' . $participant->id . '_' . time() . '.pdf';
+    $filename = 'certificate_' . $participant->id . '_' . time() . '.pdf';
     $filePath = 'certificates/' . $filename;
 
     // Save PDF to storage
@@ -85,7 +91,7 @@ class AdminController extends Controller
         $olympiadId = $id;
         $tickets = [];
         $delay = 10;
-        Participate::with('participantUser')
+        Participate::with('participantUser')->with('participantOlympiad')
             ->where('olympiad_id', $olympiadId)
             ->whereNotNull('hall_ticket_no') 
             ->whereNull('certificate_url')
