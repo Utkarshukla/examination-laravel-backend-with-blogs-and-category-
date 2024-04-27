@@ -132,14 +132,14 @@ class PaymentController extends Controller
             $order->update([
                 'status'=>'success'
             ]);
-            return response()->json(['status'=>'Your Payment successfully Completed', 'data'=>$sessionn,'message'=>'Wait for Matrix Admin response, we will send you your admit cart soon']);
+            return response()->json(['status'=>'success', 'data'=>$sessionn,'message'=>'Your Payment successfully Completed, Wait for Matrix Admin response, we will send you your admit card soon', 'url'=>$olympiad_id]);
         } else if($user_role ==2){
             $session = $session_id;
             $stripeSecretKey = config('services.stripe.secret_key');
             Stripe::setApiKey($stripeSecretKey);
             $sessionn= \Stripe\Checkout\Session::retrieve($session);
             if(!$sessionn){
-                return response()->json(['status'=>'failure','message'=>'success method fail, session id not found']);
+                return response()->json(['status'=>'failure','message'=>'failure, Payement Session Id is wrong or Not fount Cantact to Admin']);
             }
 
             $order=Payment::where('session_id',$sessionn->id)->firstOrFail();
@@ -160,7 +160,7 @@ class PaymentController extends Controller
                 ]);
             }
 
-            return response()->json(['status'=>'you are in user_role 2 , api incomplete']);
+            return response()->json(['status'=>'success','message'=>'Payment Processing Done, Data has been Updated', 'url'=>$olympiad_id]);
         }
         
     }
