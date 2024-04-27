@@ -12,4 +12,8 @@ class ParticipantSubject extends Model
     public function participant(){
         return $this->belongsTo(Participate::class,'participant_id','id');
     }
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class);
+    }
 }

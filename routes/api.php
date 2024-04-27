@@ -67,7 +67,8 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('/admin/olympiad/{id}/bulkcertificates/',[AdminController::class, 'certificates']);
         Route::post('/admin/olympiad/{id}/singleticket/',[AdminController::class,'singlehallticket']);
 
-        
+        Route::get('/admin/olympiad/{id}/getuploadmarkscsv', [AdminController::class,'getuploadmarkscsv']);
+        Route::post('/admin/olympiad/{id}/postuploadmarkscsv', [AdminController::class,'postuploadmarkscsv']);
 
         Route::get('/admin/users/',[AdminController::class,'alluser']);
         Route::get('/admin/users/{id}',[AdminController::class,'singleUser']);

@@ -16,6 +16,7 @@ return new class extends Migration
                 $table->unsignedBigInteger('participant_id');
                 $table->unsignedBigInteger('student_id');
                 $table->unsignedBigInteger('subject_id');
+                $table->integer('obtain_marks')->nullable();
                 $table->foreign('participant_id')->references('id')->on('participates');
                 $table->foreign('student_id')->references('id')->on('users');
                 $table->foreign('subject_id')->references('id')->on('subjects');
