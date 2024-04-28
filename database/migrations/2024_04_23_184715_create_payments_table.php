@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('status')->default('pending');
             $table->string('session_id');
             $table->foreign('customer_id')->references('id')->on('users');
+            $table->foreign('olympiad_id')->references('id')->on('olympiads');
+            $table->foreign('created_by')->references('id')->on('users');
             $table->timestamps();
         });
     }

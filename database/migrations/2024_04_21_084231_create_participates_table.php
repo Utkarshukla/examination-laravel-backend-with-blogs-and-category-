@@ -20,10 +20,10 @@ return new class extends Migration
             $table->integer('class');
             $table->integer('total_amount')->nullable();
             $table->boolean('total_ammount_locked')->nullable()->default(false);
-            $table->string('payment_id')->nullable();
+            $table->unsignedBigInteger('payment_id')->nullable();
             $table->string('payment_type')->nullable();
             $table->boolean('isfullPaid')->nullable()->default(false);
-            $table->string('hall_ticket_no')->nullable();
+            $table->string('hall_ticket_no')->nullable()->unique();
             $table->boolean('ticket_send')->nullable();
             $table->integer('total_marks')->nullable();
             $table->integer('obtain_marks')->nullable();
@@ -33,7 +33,7 @@ return new class extends Migration
             $table->foreign('olympiad_id')->references('id')->on('olympiads');
             $table->foreign('school_id')->references('id')->on('schools');
             $table->unsignedBigInteger('created_by')->default(0);
-            // $table->foreign('payment_id')->references('id')->on('payments');
+            $table->index('aadhar_number');
             $table->timestamps();
         });
     }

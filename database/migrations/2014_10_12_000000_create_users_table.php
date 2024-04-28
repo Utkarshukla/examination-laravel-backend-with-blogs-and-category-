@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name'); 
             $table->string('email'); 
-            $table->unsignedBigInteger('aadhar_number')->nullable();
+            $table->unsignedBigInteger('aadhar_number')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable(); 
             $table->string('phone')->nullable(); 
             $table->string('father')->nullable();  

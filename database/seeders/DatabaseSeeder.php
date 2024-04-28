@@ -21,14 +21,17 @@ class DatabaseSeeder extends Seeder
         //     'district'=>"Vijaywada",
         //     'state'=>"Andhra Pradesh",
         //     'pincode'=>'226020',
+        //     'school_id'=>1,
         //     'password'=> Hash::make('Jass@007')
         // ]);
-         \App\Models\School::factory(10)->create();
-         \App\Models\User::factory(10)->create();
-        \App\Models\Olympiad::factory(10)->create();
-          \App\Models\Subject::factory(40)->create();
-         //\App\Models\Participate::factory(10)->create();
-         //\App\Models\ParticipantSubject::factory(40)->create();
+            \App\Models\School::factory(10)->create();
+            \App\Models\User::factory(100)->create();
+            \App\Models\Olympiad::factory(100)->create();
+            \App\Models\TicketCount::factory(100)->create();
+            \App\Models\Subject::factory(400)->create();
+            \App\Models\Participate::factory(10000)->create();
+            \App\Models\ParticipantSubject::factory(40000)->create();
+            
         
     }
 }

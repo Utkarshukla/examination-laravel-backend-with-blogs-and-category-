@@ -48,7 +48,6 @@ class AdminController extends Controller
     $filename = 'certificate_' . $participant->id . '_' . time() . '.pdf';
     $filePath = 'certificates/' . $filename;
 
-    // Save PDF to storage
     Storage::disk('public')->put($filePath, $dompdf->output());
 
     // Generate URL for the saved certificate
@@ -71,27 +70,23 @@ class AdminController extends Controller
     }
     public function hallticket(Request $request, $id) {
         $olympiadId = $id;
-        $tickets = [];
+        $count = 0;
         $delay = 10;
         Participate::with('participantUser')
             ->where('olympiad_id', $olympiadId)
             ->where('hall_ticket_no', null)
-            ->chunk(20, function ($data) {  //->chunk(20, function ($data) use ($delay) {
+            ->chunk(100, function ($data) use (&$count) {
                 foreach ($data as $d) {
                     $hallTicket = $this->generateHallTicket($d->olympiad_id);
                     $d->update(['hall_ticket_no' => $hallTicket]);
                     dispatch(new SendHallTicketEmail($d));
-                    $participantEmail = $d->participantUser->email; 
-                    
+                    $count++;
                 }
             });
-
-    return response()->json(['status' => 'success', 'message' => $tickets]);
+        return response()->json(['status' => 'success', 'message' => 'Hall ticket successfully generated', 'count' => $count]);
     }
     public function certificates(Request $request, $id){
         $olympiadId = $id;
-        $tickets = [];
-        $delay = 10;
         Participate::with('participantUser')->with('participantOlympiad')
             ->where('olympiad_id', $olympiadId)
             ->whereNotNull('hall_ticket_no') 
@@ -101,7 +96,6 @@ class AdminController extends Controller
                     foreach ($data as $d) {
                         $certificateUrl = $this->generateCertificate($d);
                         $d->update(['certificate_url' => $certificateUrl]);
-                        $tomail = $d->participantUser->email;
                         dispatch(new SendCertificateEmail($d));
 
                     }

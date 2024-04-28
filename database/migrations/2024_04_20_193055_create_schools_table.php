@@ -20,9 +20,10 @@ return new class extends Migration
             $table->string('school_city');
             $table->string('school_district');
             $table->string('school_state');
-            $table->string('school_unique_code');
+            $table->string('school_unique_code')->unique();
             $table->unsignedBigInteger('author_id');
             $table->foreign('author_id')->references('id')->on('users');
+            $table->index('school_name');
             $table->timestamps();
         });
 

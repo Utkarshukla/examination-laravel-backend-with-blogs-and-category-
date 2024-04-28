@@ -21,6 +21,7 @@ return new class extends Migration
             $table->date('registration_deadline');
             $table->unsignedBigInteger('author_id');
             $table->foreign('author_id')->references('id')->on('users');
+            $table->index('name');
             $table->timestamps();
         });
     }

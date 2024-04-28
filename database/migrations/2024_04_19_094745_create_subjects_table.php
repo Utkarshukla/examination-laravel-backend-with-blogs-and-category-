@@ -19,6 +19,10 @@ return new class extends Migration
             $table->integer('subject_fee');
             $table->integer('subject_marks');
             $table->foreign('olympiad_id')->references('id')->on('olympiads');
+            $table->index('subject');
+            $table->index('subject_class');
+            $table->index('subject_fee');
+            $table->index('subject_marks');
             $table->timestamps();
         });
     }

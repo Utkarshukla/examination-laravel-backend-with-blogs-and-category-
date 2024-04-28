@@ -17,7 +17,10 @@ class ParticipantSubjectFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'participant_id' =>fake()->numberBetween(1, 10000),
+            'student_id' => fake()->numberBetween(1, 100),
+            'subject_id' => fake()->numberBetween(1, 400),
+            'obtain_marks' => 90,
         ];
     }
 }
