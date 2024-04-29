@@ -129,20 +129,23 @@ class ParticipateController extends Controller
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
         $user_role=$user->role;
-        if($user_role==5){
-           
-
-            $participatesData = Participate::with('participantOlympiad')->select('olympiad_id')->where('user_id', $user_id)->groupBy('olympiad_id')->get()->pluck('participantOlympiad');
-            $data= $participatesData;
-            return response()->json(['data'=>$data]);
-        } else if($user_role==2){
-
-            $participatesData = Participate::with('participantOlympiad')->select('olympiad_id')->where('created_by', $user_id)->groupBy('olympiad_id')->get()->pluck('participantOlympiad');
-            
-            $data= $participatesData;
-            return response()->json(['data'=>$data]);
-            
+        if($user_role == 5){
+            $participatesData = Participate::with('participantOlympiad')
+                                            ->select('olympiad_id')
+                                            ->where('user_id', $user_id)
+                                            ->groupBy('olympiad_id')
+                                            ->paginate(10); // Paginate the results with 10 records per page
+            return response()->json(['data' => $participatesData]);
+        } 
+        else if($user_role == 2){
+            $participatesData = Participate::with('participantOlympiad')
+                                            ->select('olympiad_id')
+                                            ->where('created_by', $user_id)
+                                            ->groupBy('olympiad_id')
+                                            ->paginate(10); // Paginate the results with 10 records per page
+            return response()->json(['data' => $participatesData]);
         }
+        
         
     }
 

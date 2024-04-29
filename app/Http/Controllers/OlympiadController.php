@@ -15,7 +15,7 @@ class OlympiadController extends Controller
      */
     public function index()
     {
-        return Olympiad::get();
+        return Olympiad::peginate(10);
     }
 
     /**
