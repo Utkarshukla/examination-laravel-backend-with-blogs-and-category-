@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Olympiad;
 use App\Models\Subject;
 use App\Models\TicketCount;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -13,9 +14,12 @@ class OlympiadController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        return Olympiad::peginate(10);
+    public function index(){
+        $currentDateTime = Carbon::now();
+
+    return Olympiad::where('start_date', '>', $currentDateTime) 
+                   ->orderBy('start_date', 'asc') 
+                   ->paginate(10); 
     }
 
     /**
