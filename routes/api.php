@@ -30,6 +30,7 @@ Route::post('/login',[LoginController::class,"login"]);
 Route::middleware('auth:api')->post('/logout', [LoginController::class, 'logout']);
 Route::middleware('auth:api')->get('/refresh-token', [LoginController::class, 'refreshToken']);
 Route::middleware('auth:api')->get('/verify-email', [LoginController::class, 'verifyEmail']);
+// Route::middleware('auth:api')->get('/change-password',[LoginController::class, 'changePassword']);
 Route::get('/verify-email/{email}/{token}', [LoginController::class, 'verifyEmailToken']);
 
 Route::get('/school',[SchoolController::class, 'index']);
@@ -61,6 +62,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('/admin/category',[CategoryController::class, 'store'])->name('postCategories');
 
         Route::get('/admin/olympiad/{id}/allparticipate/',[AdminController::class,'olypiad_participates']);
+        Route::get('/allparticipate/{id}/',[AdminController::class,'olypiad_participates']);
         Route::get('/admin/olympiad/{id}/allparticipate/user/{user_id}/',[AdminController::class,'olypiad_participate_single']);
 
         Route::get('/admin/olympiad/{id}/bulkhallticket/',[AdminController::class, 'hallticket']);
@@ -95,11 +97,11 @@ Route::group(['middleware' => ['auth:api']], function () {
     });
     //student only
     Route::middleware(['checkRole:5'])->group(function () {
+
         Route::post('/student/olympiad/register',[ParticipateController::class,'create']);  
         Route::get('/student/olympiad/{id}/registered',[ParticipateController::class,'show']);
         Route::get('/student/olympiad/{id}/lock-payment',[ParticipateController::class,'lock_register']);
         Route::get('/student/olympiad/your-olympiad',[ParticipateController::class,'showAll']);
-
         Route::get('/student/olympiad/{id}/checkout',[PaymentController::class,'checkout']);
 
     });
@@ -118,7 +120,6 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/post/{postid}/comment/',[CommentController::class,'show']);
         Route::post('/post/{postid}/comment/',[CommentController::class,'store']);
         
-        //Payment success/cancel route
         Route::get('/success/{session_id}', [PaymentController::class, 'success']);
         Route::get('/cancel',[PaymentController::class,'cancel']);
     });

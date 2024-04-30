@@ -16,7 +16,9 @@ class CheckRole
      */
     public function handle($request, Closure $next, ...$roles)
     {
-        // Check if the user's role matches any of the provided roles
+        if($request->user()->role ==5 && $request->user()->email_verified_at ==null){
+            abort(403,'Unauthorized Email');
+        }
         if (!in_array($request->user()->role, $roles)) {
             abort(403, 'Unauthorized action.');
         }

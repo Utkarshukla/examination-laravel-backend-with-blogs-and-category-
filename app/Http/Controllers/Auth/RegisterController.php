@@ -4,11 +4,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\VerifyEmail;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
@@ -42,7 +45,17 @@ class RegisterController extends Controller
             unset($requestData['register_as_student']);
             $user =User::create($requestData);
             $token = JWTAuth::fromUser($user);
-            return response()->json(['status'=>'success','user' => $user, 'token' => $token]);
+            $vtoken = Str::random(60);
+            if($user->email_verified_at !=null){
+                return response()->json(['status'=>'success','message'=>'Mail is already Verified.']);
+            }
+            $user->remember_token = $vtoken;
+            $user->save();
+        
+            Mail::to($user->email)->send(new VerifyEmail($user));
+        
+        //return response()->json(['status'=>'success','message' => 'Verification link Send successfully']);
+            return response()->json(['status'=>'success','user' => $user, 'token' => $token,'message'=>'Verification link Send successfully']);
         } else {
             
             $validator = Validator::make($request->all(), [

@@ -76,7 +76,7 @@ class LoginController extends Controller
         
         return response()->json(['status'=>'success','message' => 'Verification link Send successfully']);
     } catch (\Exception $e) {
-       return response()->json(['message' => 'Unauthorized'], 401);
+       return response()->json(['status' => 'failure', 'message' => 'Unauthorized'], 401);
     }
 }
 
@@ -90,12 +90,12 @@ public function verifyEmailToken(Request $request, $email ,$token)
             $user->remember_token = null;
             $user->save();
             echo 'Successfully verified';
-            return redirect('https://example.com');
+            return response()->json(['status'=>'success', 'redirect-url'=>'/']);
         } else {
-            return response()->json(['message' => 'Invalid token'], 400);
+            return response()->json(['status'=>'failure','message' => 'Invalid token'], 400);
         }
     } catch (\Exception $e) {
-        return response()->json(['message' => 'Unauthorized'], 401);
+        return response()->json(['status'=>'failure','message' => 'Unauthorized'], 401);
     }
 }
 }
