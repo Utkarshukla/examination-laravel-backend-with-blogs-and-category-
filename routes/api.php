@@ -65,6 +65,9 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/allparticipate/{id}/',[AdminController::class,'olypiad_participates']);
         Route::get('/admin/olympiad/{id}/allparticipate/user/{user_id}/',[AdminController::class,'olypiad_participate_single']);
 
+        
+        Route::get('/bulkcertificates/{id}',[AdminController::class, 'certificates']);
+        Route::get('/bulkhallticket/{id}',[AdminController::class, 'hallticket']);
         Route::get('/admin/olympiad/{id}/bulkhallticket/',[AdminController::class, 'hallticket']);
         Route::get('/admin/olympiad/{id}/bulkcertificates/',[AdminController::class, 'certificates']);
         Route::post('/admin/olympiad/{id}/singleticket/',[AdminController::class,'singlehallticket']);
