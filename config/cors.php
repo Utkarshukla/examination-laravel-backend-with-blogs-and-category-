@@ -15,20 +15,28 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    // 'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
+    // 'allowed_methods' => ['*'],
+
+    // 'allowed_origins' => [env('FRONTEND_URL_R')],
+
+    // 'allowed_origins_patterns' => [],
+
+    // 'allowed_headers' => ['*'],
+
+    // 'exposed_headers' => [],
+
+    // 'max_age' => 0,
+
+    // 'supports_credentials' => false,
+
+    'paths' => [],
+    'allowed_origins' => ['*'],
     'allowed_methods' => ['*'],
-
-    'allowed_origins' => [env('FRONTEND_URL_R')],
-
-    'allowed_origins_patterns' => [],
-
     'allowed_headers' => ['*'],
-
-    'exposed_headers' => [],
-
-    'max_age' => 0,
-
+    'exposed_headers' => false,
+    'max_age' => false,
     'supports_credentials' => false,
 
 ];
