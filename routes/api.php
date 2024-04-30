@@ -86,13 +86,10 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('/admin/incharge/{id}/unapprove/',[AdminController::class,'unapproveIncharge']);
         
     });
-    //incharge only
-    Route::middleware(['checkRole:2'])->group(function () {
-        
-    });
-    //admin, incharge
     Route::middleware(['checkRole:1,2'])->group(function () {
-        Route::post('/incharge/register/',[BulkParticipateController::class,'create']);    
+        
+        Route::post('/incharge/register/',[BulkParticipateController::class,'create']); 
+        Route::post('/incharge/olympiad/register/',[BulkParticipateController::class,'create']);    
         Route::get('/incharge/olympiad/{id}/registered',[ParticipateController::class,'show']);
         Route::get('/incharge/olympiad/your-olympiad',[ParticipateController::class,'showAll']);
         Route::delete('/incharge/olympiad/{id}/registered/{participate_id}',[ParticipateController::class,'deleteOne']);
@@ -100,6 +97,12 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/incharge/olympiad/{id}/checkout',[PaymentController::class,'checkout']);
 
     });
+    //incharge only
+    Route::middleware(['checkRole:2'])->group(function () {
+        
+    });
+    //admin, incharge
+    
     //student only
     Route::middleware(['checkRole:5'])->group(function () {
 
