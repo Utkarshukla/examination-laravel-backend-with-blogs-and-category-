@@ -103,7 +103,7 @@ class AdminController extends Controller
             );
     }
     public function olypiad_participates( string $id){
-        $data= Participate::with('participantUser')->where('olympiad_id',$id)->get();
+        $data= Participate::with('participantUser')->where('olympiad_id',$id)->paginate(10);
         return response()->json(['status'=>'success','data'=>$data],200);
     }
     public function olypiad_participate_single( string $id, string $user_id){
