@@ -78,6 +78,8 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/admin/incharge/{id}',[AdminController::class,'singleIncharge']);
         Route::get('/admin/pendingIncharge/',[AdminController::class,'pendingIncharge']);
         Route::post('admin/incharge/{id}/approve',[AdminController::class,'approveIncharge']);
+        
+        Route::post('/admin/approve/{id}',[AdminController::class,'approveIncharge']);
         Route::post('/admin/incharge/{id}/unapprove/',[AdminController::class,'unapproveIncharge']);
         
     });
