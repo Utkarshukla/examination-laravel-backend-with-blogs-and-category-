@@ -131,9 +131,10 @@ class ParticipateController extends Controller
         $user_role=$user->role;
         if($user_role == 5){
             $participatesData = Participate::with('participantOlympiad')
+                                            ->select('olympiad_id')
                                             ->where('user_id', $user_id)
-                                            ->paginate(10); 
-            print_r($participatesData);
+                                            ->groupBy('olympiad_id')
+                                            ->paginate(10); // Paginate the results with 10 records per page
             return response()->json(['status'=>'success','data' => $participatesData]);
         } 
         else if($user_role == 2){
@@ -142,7 +143,7 @@ class ParticipateController extends Controller
                                             ->where('created_by', $user_id)
                                             ->groupBy('olympiad_id')
                                             ->paginate(10); // Paginate the results with 10 records per page
-            return response()->json(['data' => $participatesData]);
+            return response()->json(['status'=>'success','data' => $participatesData]);
         }
         
         
