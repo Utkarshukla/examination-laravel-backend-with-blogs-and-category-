@@ -98,7 +98,8 @@ class BulkParticipateController extends Controller
                         'pincode'=>$pincode,
                         'school_id'=>$school_id,
                         'state'=>$state,
-                        'password'=>$aadhar
+                        'password'=>$aadhar,
+                        'created_by'=>$user_id
                     ]);
                 }
                 $subjectData=[];

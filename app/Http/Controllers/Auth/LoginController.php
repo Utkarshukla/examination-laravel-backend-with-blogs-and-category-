@@ -16,6 +16,7 @@ use App\Mail\VerifyEmail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -98,4 +99,19 @@ public function verifyEmailToken(Request $request, $email ,$token)
         return response()->json(['status'=>'failure','message' => 'Unauthorized'], 401);
     }
 }
+    public function changePassword(Request $request)
+    {
+        $user = Auth::user();
+        $request->validate([
+            'old_password' => 'required|string',
+            'new_password' => 'required|string|min:8',
+        ]);
+        if (!Hash::check($request->old_password, $user->password)) {
+            return response()->json(['error' => 'The old password is incorrect.'], 400);
+        }
+        $user->password = $request->new_password;
+        
+
+        return response()->json(['message' => 'Password changed successfully.'], 200);
+    }
 }
