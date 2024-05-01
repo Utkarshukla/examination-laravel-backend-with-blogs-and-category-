@@ -132,8 +132,9 @@ class ParticipateController extends Controller
         if($user_role == 5){
             $participatesData = Participate::with('participantOlympiad')
                                             ->where('user_id', $user_id)
-                                            ->paginate(10); // Paginate the results with 10 records per page
-            return response()->json(['data' => $participatesData]);
+                                            ->paginate(10); 
+            print_r($participatesData);
+            return response()->json(['status'=>'success','data' => $participatesData]);
         } 
         else if($user_role == 2){
             $participatesData = Participate::with('participantOlympiad')
