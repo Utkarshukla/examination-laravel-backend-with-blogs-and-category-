@@ -138,7 +138,7 @@ class BulkParticipateController extends Controller
 
             $totalRequests = count($request->all());
             $percentage = ($count / $totalRequests) * 100;
-            return response()->json(['status'=>'success' ,'percentage' => $percentage, 'message' => $percentage.'% Data uploaded successfully']);
+            return response()->json(['status'=>'success' ,'percentage' => $percentage, 'message' => $percentage.'%  Data uploaded successfully']);
         }
         return response()->json(['message'=>'You are not allowed to register via csv'],422);
 
