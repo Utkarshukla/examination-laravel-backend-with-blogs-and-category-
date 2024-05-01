@@ -193,7 +193,7 @@ class ParticipateController extends Controller
             if($participation->isfullPaid != 1){
                 $participation->participantSubject()->delete();
                 $participation->delete();
-                return response()->json(['status'=>'failure','message'=>"Participation record deleted successfully"]);
+                return response()->json(['status'=>'success','message'=>"Participation record deleted successfully"]);
             } else {
                 return response()->json(['status'=>'failure','message'=>"Can't delete , Student already Paid "]);
             }
