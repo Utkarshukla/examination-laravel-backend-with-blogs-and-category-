@@ -7,6 +7,7 @@ use App\Models\Participate;
 use App\Models\School;
 use App\Models\Subject;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -62,7 +63,8 @@ class BulkParticipateController extends Controller
                 $father=$requestdata['father']??'NAN';
                 $mother=$requestdata['mother'] ??'NAN';
                 $class=$requestdata['class'];
-                $dob=$requestdata['dob'];
+                $dob = Carbon::createFromFormat('d-m-Y', $requestdata['dob'])->format('Y-m-d');
+                // $dob=$requestdata['dob'];
                 $city=$requestdata['city']?? 'Vijayawada';
                 $district = $requestdata['district'] ?? 'Krishna';
                 $state = $requestdata['state']??'Andhra Pradesh';
