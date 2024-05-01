@@ -15,6 +15,9 @@ class Participate extends Model
     public function participantUser(){
         return $this->belongsTo(User::class,'user_id','id');
     }
+    public function participantSchool(){
+        return $this->belongsTo(School::class,'school_id','id');
+    }
 
     public function participantOlympiad(){
         return $this->belongsTo(Olympiad::class,'olympiad_id','id');

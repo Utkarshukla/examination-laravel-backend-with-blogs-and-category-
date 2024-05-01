@@ -39,6 +39,9 @@ Route::get('/olympiads',[OlympiadController::class,'index']);
 Route::get('/olympiads/{id}',[OlympiadController::class,'show']);
 Route::get('/schools',[SchoolController::class,'index']);
 
+Route::get('/matrix/topper/{class}/{olympiad}',[AdminController::class,'topperlist']);
+Route::get('/matrix/senior-topper/{class}/{olympiad}/{school_id}',[AdminController::class,'schoolseniortopper']);
+Route::get('/matrix/junior-topper/{class}/{olympiad}/{school_id}',[AdminController::class,'schooljuniortopper']);
 
 //Routes for logged in user 
 Route::group(['middleware' => ['auth:api']], function () {
