@@ -101,6 +101,7 @@ class AdminController extends Controller
                     }
                 }
             );
+        return response()->json(['status'=>'success', 'message'=>'Certificates generated successfully!']);
     }
     public function olypiad_participates( string $id){
         $data= Participate::with('participantUser')->where('olympiad_id',$id)->paginate(10);
