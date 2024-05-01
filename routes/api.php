@@ -63,7 +63,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
         Route::get('/admin/olympiad/{id}/allparticipate/',[AdminController::class,'olypiad_participates']);
         Route::get('/allparticipate/{id}/',[AdminController::class,'olypiad_participates']);
-        Route::get('/olympiad/{id}/{user_id}/',[AdminController::class,'olypiad_participate_single']);
+        Route::get('/admin/olympiad/{id}/{user_id}/',[AdminController::class,'olypiad_participate_single']);
         Route::get('/admin/olympiad/{id}/allparticipate/user/{user_id}/',[AdminController::class,'olypiad_participate_single']);
 
         
