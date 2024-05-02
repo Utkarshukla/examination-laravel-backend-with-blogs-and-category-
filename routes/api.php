@@ -30,7 +30,7 @@ Route::post('/login',[LoginController::class,"login"]);
 Route::middleware('auth:api')->post('/logout', [LoginController::class, 'logout']);
 Route::middleware('auth:api')->get('/refresh-token', [LoginController::class, 'refreshToken']);
 Route::middleware('auth:api')->get('/verify-email', [LoginController::class, 'verifyEmail']);
-// Route::middleware('auth:api')->get('/change-password',[LoginController::class, 'changePassword']);
+Route::middleware('auth:api')->get('/change-password',[LoginController::class, 'changePassword']);
 
 Route::middleware('auth:api')->get('/verify-email/{email}/{token}', [LoginController::class, 'verifyEmailToken']);
 Route::middleware('auth:api')->get('/profile',[UserController::class,'show']);
