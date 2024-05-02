@@ -31,7 +31,11 @@ Route::middleware('auth:api')->post('/logout', [LoginController::class, 'logout'
 Route::middleware('auth:api')->get('/refresh-token', [LoginController::class, 'refreshToken']);
 Route::middleware('auth:api')->get('/verify-email', [LoginController::class, 'verifyEmail']);
 // Route::middleware('auth:api')->get('/change-password',[LoginController::class, 'changePassword']);
-Route::get('/verify-email/{email}/{token}', [LoginController::class, 'verifyEmailToken']);
+
+Route::middleware('auth:api')->get('/verify-email/{email}/{token}', [LoginController::class, 'verifyEmailToken']);
+Route::middleware('auth:api')->get('/profile',[UserController::class,'show']);
+Route::middleware('auth:api')->put('/profile/update',[UserController::class,'update']);
+Route::middleware('auth:api')->delete('/profile/delete',[UserController::class,'show']);
 
 Route::get('/school',[SchoolController::class, 'index']);
 Route::get('/school/{id}',[SchoolController::class,'show']);
@@ -123,9 +127,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         
     });
     Route::middleware(['checkRole:1,2,3,4,5'])->group(function () {
-        Route::get('/profile',[UserController::class,'show']);
-        Route::put('/profile/update',[UserController::class,'update']);
-        Route::delete('/profile/delete',[UserController::class,'show']);
+        
         
         Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
 
