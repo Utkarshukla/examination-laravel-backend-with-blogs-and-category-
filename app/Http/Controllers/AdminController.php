@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ApprovedInchargeMail;
 use App\Jobs\SendCertificateEmail;
 use App\Jobs\SendHallTicketEmail;
 use App\Mail\HallTicket;
@@ -140,6 +141,7 @@ class AdminController extends Controller
         $data->update([
             'role'=>2
         ]);
+        dispatch(new ApprovedInchargeMail($data));
         return response()->json(['status'=>'success','data'=>$data],200);
     }
     public function unapproveIncharge(string $id){
