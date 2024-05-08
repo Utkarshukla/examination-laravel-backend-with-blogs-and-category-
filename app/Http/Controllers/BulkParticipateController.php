@@ -7,7 +7,6 @@ use App\Models\Participate;
 use App\Models\School;
 use App\Models\Subject;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -63,8 +62,7 @@ class BulkParticipateController extends Controller
                 $father=$requestdata['father']??'NAN';
                 $mother=$requestdata['mother'] ??'NAN';
                 $class=$requestdata['class'];
-                $dob = Carbon::createFromFormat('d-m-Y', $requestdata['dob'])->format('Y-m-d');
-                // $dob=$requestdata['dob'];
+                $dob=$requestdata['dob'];
                 $city=$requestdata['city']?? 'Vijayawada';
                 $district = $requestdata['district'] ?? 'Krishna';
                 $state = $requestdata['state']??'Andhra Pradesh';
@@ -100,8 +98,7 @@ class BulkParticipateController extends Controller
                         'pincode'=>$pincode,
                         'school_id'=>$school_id,
                         'state'=>$state,
-                        'password'=>$aadhar,
-                        'created_by'=>$user_id
+                        'password'=>$aadhar
                     ]);
                 }
                 $subjectData=[];
@@ -141,7 +138,7 @@ class BulkParticipateController extends Controller
 
             $totalRequests = count($request->all());
             $percentage = ($count / $totalRequests) * 100;
-            return response()->json(['status'=>'success' ,'percentage' => $percentage, 'message' => $percentage.'%  Data uploaded successfully']);
+            return response()->json(['percentage' => $percentage, 'message' => 'Processing...']);
         }
         return response()->json(['message'=>'You are not allowed to register via csv'],422);
 

@@ -16,7 +16,7 @@ class CheckRole
      */
     public function handle($request, Closure $next, ...$roles)
     {
-        if($request->user()->role ==5 && $request->user()->email_verified_at ==null && $request->user()->created_by==0){
+        if($request->user()->role ==5 && $request->user()->email_verified_at ==null){
             abort(403,'Unauthorized Email');
         }
         if (!in_array($request->user()->role, $roles)) {

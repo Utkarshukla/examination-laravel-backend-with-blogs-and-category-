@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\ApprovedInchargeMail;
 use App\Jobs\SendCertificateEmail;
 use App\Jobs\SendHallTicketEmail;
 use App\Mail\HallTicket;
@@ -15,7 +14,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Dompdf\Dompdf;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 
@@ -103,7 +101,6 @@ class AdminController extends Controller
                     }
                 }
             );
-        return response()->json(['status'=>'success', 'message'=>'Certificates generated successfully!']);
     }
     public function olypiad_participates( string $id){
         $data= Participate::with('participantUser')->where('olympiad_id',$id)->paginate(10);
@@ -141,7 +138,6 @@ class AdminController extends Controller
         $data->update([
             'role'=>2
         ]);
-        dispatch(new ApprovedInchargeMail($data));
         return response()->json(['status'=>'success','data'=>$data],200);
     }
     public function unapproveIncharge(string $id){
@@ -221,87 +217,8 @@ class AdminController extends Controller
     
         return response()->json(['status' => 'success', 'message' => 'Marks updated successfully']);
     }
-    public function topperlist(string $class,string $olympiad){
-        $toppers = Participate::with(['participantUser', 'participantSchool'])
-        ->where('class', $class)
-        ->where('olympiad_id',$olympiad)
-        ->orderByDesc('obtain_marks')
-        ->limit(10)
-        ->get();
-        $data = [];
-        foreach ($toppers as $topper) {
-            $obtainMarks = $topper->obtain_marks;
-            $totalMarks = $topper->total_marks;
-            $percentage = $totalMarks != 0 ? ($obtainMarks / $totalMarks) * 100 : 0;
-            $participantData = [
-                'name' => $topper->participantUser->name,
-                'class'=>$topper->class,
-                'school' => $topper->participantSchool->school_name,
-                'obtain_marks' => $obtainMarks,
-                'total_marks' => $totalMarks,
-                'percentage' => $percentage
-            ];
-            $data[] = $participantData;
-        }
-        return response()->json(['data' => $data]);
+    
 
-    }
-    public function schoolseniortopper(string $class,string $olympiad,string $school_id){
-                    $toppers = Participate::with(['participantUser', 'participantSchool'])
-                ->whereBetween('class', [6, 10])
-                ->where('olympiad_id', $olympiad)
-                ->where('school_id', $school_id)
-                ->orderByDesc('obtain_marks')
-                ->limit(10)
-                ->get();
-
-            $data = [];
-
-            foreach ($toppers as $topper) {
-                $obtainMarks = $topper->obtain_marks;
-                $totalMarks = $topper->total_marks;
-                $percentage = $totalMarks != 0 ? ($obtainMarks / $totalMarks) * 100 : 0;
-                $participantData = [
-                    'name' => $topper->participantUser->name,
-                    'class' => $topper->class,
-                    'school' => $topper->participantSchool->school_name,
-                    'obtain_marks' => $obtainMarks,
-                    'total_marks' => $totalMarks,
-                    'percentage' => $percentage
-                ];
-                $data[] = $participantData;
-            }
-
-            return response()->json(['data' => $data]);
-    }
-    public function schooljuniortopper(string $class,string $olympiad,string $school_id){
-                $toppers = Participate::with(['participantUser', 'participantSchool'])
-                ->whereBetween('class', [3, 5])
-                ->where('olympiad_id', $olympiad)
-                ->where('school_id', $school_id)
-                ->orderByDesc('obtain_marks')
-                ->limit(10)
-                ->get();
-
-                $data = [];
-
-                foreach ($toppers as $topper) {
-                    $obtainMarks = $topper->obtain_marks;
-                    $totalMarks = $topper->total_marks;
-                    $percentage = $totalMarks != 0 ? ($obtainMarks / $totalMarks) * 100 : 0;
-                    $participantData = [
-                        'name' => $topper->participantUser->name,
-                        'class' => $topper->class,
-                        'school' => $topper->participantSchool->school_name,
-                        'obtain_marks' => $obtainMarks,
-                        'total_marks' => $totalMarks,
-                        'percentage' => $percentage
-                    ];
-                    $data[] = $participantData;
-                }
-
-        return response()->json(['data' => $data]);
-}
 }
 
 

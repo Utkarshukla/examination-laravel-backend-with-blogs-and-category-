@@ -135,7 +135,7 @@ class ParticipateController extends Controller
                                             ->where('user_id', $user_id)
                                             ->groupBy('olympiad_id')
                                             ->paginate(10); // Paginate the results with 10 records per page
-            return response()->json(['status'=>'success','data' => $participatesData]);
+            return response()->json(['data' => $participatesData]);
         } 
         else if($user_role == 2){
             $participatesData = Participate::with('participantOlympiad')
@@ -143,7 +143,7 @@ class ParticipateController extends Controller
                                             ->where('created_by', $user_id)
                                             ->groupBy('olympiad_id')
                                             ->paginate(10); // Paginate the results with 10 records per page
-            return response()->json(['status'=>'success','data' => $participatesData]);
+            return response()->json(['data' => $participatesData]);
         }
         
         
@@ -193,7 +193,7 @@ class ParticipateController extends Controller
             if($participation->isfullPaid != 1){
                 $participation->participantSubject()->delete();
                 $participation->delete();
-                return response()->json(['status'=>'success','message'=>"Participation record deleted successfully"]);
+                return response()->json(['status'=>'failure','message'=>"Participation record deleted successfully"]);
             } else {
                 return response()->json(['status'=>'failure','message'=>"Can't delete , Student already Paid "]);
             }

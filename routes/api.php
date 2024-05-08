@@ -30,12 +30,8 @@ Route::post('/login',[LoginController::class,"login"]);
 Route::middleware('auth:api')->post('/logout', [LoginController::class, 'logout']);
 Route::middleware('auth:api')->get('/refresh-token', [LoginController::class, 'refreshToken']);
 Route::middleware('auth:api')->get('/verify-email', [LoginController::class, 'verifyEmail']);
-Route::middleware('auth:api')->put('/change-password',[LoginController::class, 'changePassword']);
-
-Route::middleware('auth:api')->get('/verify-email/{email}/{token}', [LoginController::class, 'verifyEmailToken']);
-Route::middleware('auth:api')->get('/profile',[UserController::class,'show']);
-Route::middleware('auth:api')->put('/profile/update',[UserController::class,'update']);
-Route::middleware('auth:api')->delete('/profile/delete',[UserController::class,'show']);
+// Route::middleware('auth:api')->get('/change-password',[LoginController::class, 'changePassword']);
+Route::get('/verify-email/{email}/{token}', [LoginController::class, 'verifyEmailToken']);
 
 Route::get('/school',[SchoolController::class, 'index']);
 Route::get('/school/{id}',[SchoolController::class,'show']);
@@ -43,9 +39,6 @@ Route::get('/olympiads',[OlympiadController::class,'index']);
 Route::get('/olympiads/{id}',[OlympiadController::class,'show']);
 Route::get('/schools',[SchoolController::class,'index']);
 
-Route::get('/matrix/topper/{class}/{olympiad}',[AdminController::class,'topperlist']);
-Route::get('/matrix/senior-topper/{class}/{olympiad}/{school_id}',[AdminController::class,'schoolseniortopper']);
-Route::get('/matrix/junior-topper/{class}/{olympiad}/{school_id}',[AdminController::class,'schooljuniortopper']);
 
 //Routes for logged in user 
 Route::group(['middleware' => ['auth:api']], function () {
@@ -70,7 +63,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
         Route::get('/admin/olympiad/{id}/allparticipate/',[AdminController::class,'olypiad_participates']);
         Route::get('/allparticipate/{id}/',[AdminController::class,'olypiad_participates']);
-        Route::get('/admin/olympiad/{id}/{user_id}/',[AdminController::class,'olypiad_participate_single']);
+        Route::get('/olympiad/{id}/{user_id}/',[AdminController::class,'olypiad_participate_single']);
         Route::get('/admin/olympiad/{id}/allparticipate/user/{user_id}/',[AdminController::class,'olypiad_participate_single']);
 
         
@@ -127,7 +120,9 @@ Route::group(['middleware' => ['auth:api']], function () {
         
     });
     Route::middleware(['checkRole:1,2,3,4,5'])->group(function () {
-        
+        Route::get('/profile',[UserController::class,'show']);
+        Route::put('/profile/update',[UserController::class,'update']);
+        Route::delete('/profile/delete',[UserController::class,'show']);
         
         Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
 
